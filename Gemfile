@@ -23,7 +23,6 @@ group :development, :test do
   gem 'brakeman'
   gem 'dotenv'
   gem 'factory_girl_rails'
-  gem 'letter_opener'
   gem 'oink'
   gem 'pry-nav'
   gem 'quiet_assets'
