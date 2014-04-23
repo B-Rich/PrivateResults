@@ -6,6 +6,7 @@ gem 'rails', '4.1.0'
 #gem 'jbuilder', '~> 2.0' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 
 gem 'active_model_serializers'
+gem 'awesome_print'
 gem 'contracts', git: 'https://github.com/egonSchiele/contracts.ruby.git'
 gem 'jquery-rails' # Use jquery as the JavaScript library
 gem 'pg' # Use postgresql as the database for Active Record
