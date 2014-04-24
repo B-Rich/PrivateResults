@@ -15,6 +15,7 @@ describe Patient do
   let(:patient) { FactoryGirl.build(:patient) }
 
   it { should have_many(:visits) }
+  it { should be_versioned }
 
   describe '#valid?' do
     context 'given valid attributes' do

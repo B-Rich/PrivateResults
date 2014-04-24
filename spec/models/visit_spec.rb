@@ -24,6 +24,7 @@ describe Visit do
   let(:visit) { FactoryGirl.build(:visit) }
 
   it { should belong_to(:patient) }
+  it { should be_versioned }
 
   describe '#valid?' do
     context 'given valid attributes' do

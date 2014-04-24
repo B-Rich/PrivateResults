@@ -45,4 +45,5 @@ class Visit < ActiveRecord::Base
   validates :race, inclusion: { in: RACE_VALUES }
   validates :sexual_preference, inclusion: { in: SEXUAL_PREFERENCE_VALUES }
   validates :sexual_identity, inclusion: { in: SEXUAL_IDENTITY_VALUES }
+  has_paper_trail
 end
