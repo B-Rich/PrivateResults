@@ -21,6 +21,8 @@ describe Visit do
       it { should ensure_inclusion_of(:cosite).in_array(Visit::COSITE_VALUES) }
       it { should ensure_inclusion_of(:sex).in_array(Visit::SEX_VALUES) }
       it { should ensure_inclusion_of(:race).in_array(Visit::RACE_VALUES) }
+      it { should ensure_inclusion_of(:sexual_preference).in_array(Visit::SEXUAL_PREFERENCE_VALUES) }
+      it { should ensure_inclusion_of(:sexual_identity).in_array(Visit::SEXUAL_IDENTITY_VALUES) }
     end
   end
 end
