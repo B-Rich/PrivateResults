@@ -9,8 +9,8 @@ FactoryGirl.define do
     sequence(:visited_on) {|n| n.weeks.ago }
     sequence(:zip_code) {|n| "#{n}12345" }
     sex "M"
-    sexualidentity "Straight"
-    sexualpref "Opposite sex"
+    sexual_identity "Straight"
+    sexual_preference "Opposite sex"
     uuid { UUID.generate }
 
     patient
