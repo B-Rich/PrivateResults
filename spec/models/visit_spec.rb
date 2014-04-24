@@ -16,5 +16,11 @@ describe Visit do
     it { should validate_presence_of(:uuid) }
     it { should validate_presence_of(:visited_on) }
 
+
+    context 'given invalid attributes' do
+      it { should ensure_inclusion_of(:cosite).in_array(Visit::COSITE_VALUES) }
+      it { should ensure_inclusion_of(:sex).in_array(Visit::SEX_VALUES) }
+      it { should ensure_inclusion_of(:race).in_array(Visit::RACE_VALUES) }
+    end
   end
 end
