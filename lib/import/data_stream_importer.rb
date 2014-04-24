@@ -9,8 +9,8 @@ class DataStreamImporter
   Contract nil => ArrayOf[ArrayOf[Or[String,Num,nil]]]
   def rows
     unless @rows.present?
-      Rails.logger.info("Parsing #{stream.length} bytes of CSV stream")
-      @rows ||= CSV.parse(stream)
+      Rails.logger.info("Parsing #{stream.size} bytes of CSV stream")
+      @rows ||= CSV.parse(stream.read)
       header
     end
 
