@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: visits
+#
+#  id                               :integer          not null, primary key
+#  patient_id                       :integer
+#  uuid                             :uuid
+#  visited_on                       :date
+#  cosite                           :string(255)
+#  sex                              :string(255)
+#  race                             :string(255)
+#  zip_code                         :string(255)
+#  sexual_preference                :string(255)
+#  sexual_identity                  :string(255)
+#  age                              :integer
+#  partners_last_6_months_5_or_more :integer
+#  created_at                       :datetime
+#  updated_at                       :datetime
+#
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
