@@ -13,16 +13,17 @@ describe Patient do
     it { should validate_presence_of(:patient_number) }
     it { should validate_uniqueness_of(:patient_number) }
 
-    it { should validate_presence_of(:uuid) }
-
+    it { expect(Patient.ensures_uuid?).to eq(true) }
     context 'given invalid attributes' do
-      context 'given a non-unique uuid' do
-        it 'fails validation' do
-          patient.save!
+      context 'uuid' do
+        context 'non-unique' do
+          it 'fails validation' do
+            patient.save!
 
-          other = FactoryGirl.build(:patient, uuid: patient.uuid)
+            other = FactoryGirl.build(:patient, uuid: patient.uuid)
 
-          expect(other).not_to be_valid
+            expect(other).not_to be_valid
+          end
         end
       end
     end
