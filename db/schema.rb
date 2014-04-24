@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140424181745) do
+ActiveRecord::Schema.define(version: 20140424183702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,5 +34,21 @@ ActiveRecord::Schema.define(version: 20140424181745) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+
+  create_table "visits", force: true do |t|
+    t.integer  "patient_id"
+    t.uuid     "uuid"
+    t.date     "visited_on"
+    t.string   "cosite"
+    t.string   "sex"
+    t.string   "race"
+    t.string   "zip_code"
+    t.string   "sexualpref"
+    t.string   "sexualidentity"
+    t.integer  "age"
+    t.integer  "partners_last_6_months_5_or_more"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

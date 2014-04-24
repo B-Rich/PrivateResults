@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Patient do
   let(:patient) { FactoryGirl.build(:patient) }
 
+  it { should have_many(:visits) }
+
   describe '#valid?' do
     context 'given valid attributes' do
       it { expect(patient).to be_valid }
