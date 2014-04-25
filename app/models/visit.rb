@@ -19,6 +19,7 @@
 #
 
 class Visit < ActiveRecord::Base
+  include EnsureUuid
   belongs_to :patient
 
   COSITE_VALUES = %W{C D E SJ TB U}
