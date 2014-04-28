@@ -6,14 +6,18 @@ module Insight
 
     attr_accessor :stream
 
+    # @api private
+    # @return [Array<Hash>]
+    def row_hashes
+      @row_hashes ||= DataStreamImporter.new(stream: stream).to_hashes
+    end
+
     # Execute Insight CSV import
     # @api public
     # @return [Array<Patient>] constructed Patient models
     def import!
-      row_hashes = DataStreamImporter.new(stream: stream).to_hashes
-      Rails.logger.info("Read #{row_hashes.count} rows from stream")
-
       Rails.logger.info("Processing rows")
+
       row_hashes.map do |row_hash|
         Insight::RowHandler.new(row_hash: row_hash).run!
       end
