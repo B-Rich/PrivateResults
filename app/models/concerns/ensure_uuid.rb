@@ -1,3 +1,5 @@
+# Mechanisms for ensuring UUID properties exist on ActiveRecord-compatible models
+# @api public
 module EnsureUuid
   extend ActiveSupport::Concern
 
@@ -10,6 +12,8 @@ module EnsureUuid
     end
   end
 
+  # @api private
+  # @return [String] a UUID
   def ensure_uuid
     self.uuid ||= UUID.generate
   end

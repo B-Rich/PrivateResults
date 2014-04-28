@@ -1,5 +1,5 @@
-# Cover handling a single Insight CSV row
 module Insight
+  # Cover handling a single Insight CSV row
   class RowHandler
     include Contracts
     include ActiveModel::Model

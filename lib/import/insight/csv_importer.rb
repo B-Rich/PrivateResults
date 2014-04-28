@@ -1,5 +1,5 @@
-# Orchestration of entire Insight CSV import process
 module Insight
+  # Orchestration of entire Insight CSV import process
   class CsvImporter
     include Contracts
     include ActiveModel::Model

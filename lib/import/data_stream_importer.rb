@@ -1,5 +1,7 @@
 require 'csv'
 
+# Imports CSV data from an IO stream by converting to hashes
+# @api public
 class DataStreamImporter
   include Contracts
   include ActiveModel::Model
@@ -7,6 +9,8 @@ class DataStreamImporter
   attr_accessor :stream
 
   Contract nil => ArrayOf[ArrayOf[Or[String,Num,nil]]]
+  # @api private
+  # @return [Array<Array<String,Num,nil>>] parsed CSV rows
   def rows
     unless @rows.present?
       Rails.logger.info("Parsing #{stream.size} bytes of CSV stream")
@@ -18,11 +22,16 @@ class DataStreamImporter
   end
 
   Contract nil => Maybe[ArrayOf[Symbol]]
+  # @api private
+  # @return [Array<Symbol>,nil] maybe the header row
   def header
     @header ||= @rows.shift.map(&:to_sym) if @rows
   end
 
   Contract nil => ArrayOf[HashOf[Symbol, Or[String,Num,nil]]]
+  # Provides CSV rows as hashes with column headers as keys
+  # @api public
+  # @return [Array<Hash{Symbol => String,Num,nil}>] CSV rows as hashes
   def to_hashes
     output = rows.map do |row|
       Hash[header.zip(row)]
