@@ -1,3 +1,4 @@
+# Generates {Visit} model from supplied data. Idempotent.
 # @api public
 class VisitFactory
   include Contracts
@@ -11,6 +12,7 @@ class VisitFactory
   attr_accessor :patient_id, :visit_date, :cosite, :sex, :race, :zip_code, :sexualpref, :sexualidentity, :age, :partners_last_6_months_5_or_more
 
   Contract nil => Visit
+  # Constructs model
   # @api public
   # @return [Visit] the created visit
   def make!
@@ -36,11 +38,11 @@ class VisitFactory
     Date.strptime(date_string, DATE_FORMAT_STRING)
   end
 
-  Contract String => Num
+  Contract Maybe[String] => Maybe[Num]
   # Convert raw age string to number
   # @api private
-  # @param age_string [String] raw age string
-  # @return [Fixnum] age as a Ruby number
+  # @param age_string [String,nil] raw age string
+  # @return [Fixnum,nil] age as a Ruby number
   def parsed_age(age_string)
     age_string.to_i
   end

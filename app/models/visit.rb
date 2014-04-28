@@ -37,14 +37,14 @@ class Visit < ActiveRecord::Base
   SEXUAL_PREFERENCE_VALUES = ['Opposite sex', 'Same sex', 'Either sex']
   SEXUAL_IDENTITY_VALUES = %W{Straight Gay Bisexual}
 
-  validates :partners_last_6_months_5_or_more, numericality: true
+  validates :partners_last_6_months_5_or_more, numericality: true, allow_blank: true
   validates :visited_on, presence: true
   validates :cosite, presence: true, inclusion: { in: COSITE_VALUES }
   validates :age, numericality: true
   validates :uuid, presence: true, uniqueness: true
-  validates :sex, inclusion: { in: SEX_VALUES }
-  validates :race, inclusion: { in: RACE_VALUES }
-  validates :sexual_preference, inclusion: { in: SEXUAL_PREFERENCE_VALUES }
-  validates :sexual_identity, inclusion: { in: SEXUAL_IDENTITY_VALUES }
+  validates :sex, inclusion: { in: SEX_VALUES }, allow_blank: true
+  validates :race, inclusion: { in: RACE_VALUES }, allow_blank: true
+  validates :sexual_preference, inclusion: { in: SEXUAL_PREFERENCE_VALUES }, allow_blank: true
+  validates :sexual_identity, inclusion: { in: SEXUAL_IDENTITY_VALUES }, allow_blank: true
   has_paper_trail
 end
