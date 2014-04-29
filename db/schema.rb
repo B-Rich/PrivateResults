@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140429133417) do
+ActiveRecord::Schema.define(version: 20140429142048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,15 @@ ActiveRecord::Schema.define(version: 20140429133417) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.uuid     "uuid"
+  end
+
+  create_table "results", force: true do |t|
+    t.string   "name"
+    t.integer  "infection_test_id"
+    t.uuid     "uuid"
+    t.boolean  "positive",          default: true, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "versions", force: true do |t|
