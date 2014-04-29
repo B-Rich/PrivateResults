@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: infections
+#
+#  id         :integer          not null, primary key
+#  name       :string(255)
+#  uuid       :uuid
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 require 'spec_helper'
 
 describe Infection do
