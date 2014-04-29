@@ -20,7 +20,9 @@
 
 class Visit < ActiveRecord::Base
   include EnsureUuid
+
   belongs_to :patient
+  has_many :infection_tests
 
   # Valid values for cosite attribute
   # @api public
