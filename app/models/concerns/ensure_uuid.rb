@@ -12,6 +12,7 @@ module EnsureUuid
     end
   end
 
+  # Conditionally assigns a UUID to the uuid property
   # @api private
   # @return [String] a UUID
   def ensure_uuid

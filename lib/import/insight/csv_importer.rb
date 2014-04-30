@@ -4,8 +4,12 @@ module Insight
     include Contracts
     include ActiveModel::Model
 
+    # @api private
+    # @!attribute [rw] stream
+    # @return [IO] the IO stream from which data comes
     attr_accessor :stream
 
+    # Produces row data as hashes
     # @api private
     # @return [Array<Hash>]
     def row_hashes
@@ -14,6 +18,8 @@ module Insight
 
     # Execute Insight CSV import
     # @api public
+    # @example
+    #  csv_importer.import!
     # @return [Array<Patient>] constructed Patient models
     def import!
       Rails.logger.info("Processing rows")

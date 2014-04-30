@@ -9,6 +9,8 @@ class InfectionTestFactory
   Contract nil => InfectionTest
   # Constructs model
   # @api public
+  # @example
+  #  infection_test_factory.make!
   # @return [InfectionTest] the created visit
   def make!
     InfectionTest

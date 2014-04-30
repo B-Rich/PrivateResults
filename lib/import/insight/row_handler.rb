@@ -1,3 +1,4 @@
+# INSIGHT data import components
 module Insight
   # Cover handling a single Insight CSV row
   class RowHandler
@@ -7,7 +8,10 @@ module Insight
     attr_accessor :row_hash
 
     Contract nil => Patient
+    # Handle this row
     # @api public
+    # @example
+    #  row_handler.run!
     # @return [Patient] object graph starting with Patient
     def run!
       patient = make_patient(row_hash)
@@ -30,6 +34,7 @@ module Insight
     # @api private
     # @param row [Hash] hash containing row data
     # @param patient_id [Fixnum] DB id of corresponding {Patient}
+    # @return [Visit] new or existing Patient record
     def make_visit(row, patient_id)
       transform_map = [:visit_date,
                        :cosite,

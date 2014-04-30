@@ -9,6 +9,8 @@ class ResultFactory
   Contract nil => Result
   # Constructs model
   # @api public
+  # @example
+  #  result_factory.make!
   # @return [Result] the created result
   def make!
     Result

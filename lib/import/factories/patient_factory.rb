@@ -9,6 +9,8 @@ class PatientFactory
   Contract nil => Patient
   # Constructs model
   # @api public
+  # @example
+  #  patient_factory.make!
   # @return [Patient] the created patient
   def make!
     Patient

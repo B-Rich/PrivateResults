@@ -14,6 +14,8 @@ class VisitFactory
   Contract nil => Visit
   # Constructs model
   # @api public
+  # @example
+  #  visit_factory.make!
   # @return [Visit] the created visit
   def make!
     Visit
