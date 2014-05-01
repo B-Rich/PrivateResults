@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe Insight::RowHandler do
-  let(:path) { Rails.root.join('spec', 'data', 'test_import_data.csv').to_s }
-  let(:stream) { File.open(path, 'rb') }
-  let(:row_hash) { DataStreamImporter.new(stream: stream).to_hashes.first }
+  let(:row_hash) { @row_hash }
 
-  after(:each) { stream.close }
+  before(:all) do
+    io = File.open(Rails.root.join('spec', 'data', 'test_import_data.csv').to_s, 'rb')
+    @row_hash = DataStreamImporter.new(stream: io).to_hashes.first
+    io.close
+  end
 
   let(:row_handler) { Insight::RowHandler.new(row_hash: row_hash) }
 
@@ -17,6 +19,14 @@ describe Insight::RowHandler do
             row_handler.run!
           }.to change(klass, :count).by(1)
         end
+      end
+    end
+
+    describe InfectionTest.model_name.human do
+      it 'creates new records' do
+        expect {
+          row_handler.run!
+        }.to change(InfectionTest, :count).by(3)
       end
     end
   end

@@ -14,10 +14,47 @@ module Insight
     #  row_handler.run!
     # @return [Patient] object graph starting with Patient
     def run!
-      patient = make_patient(row_hash)
-      visit = make_visit(row_hash, patient.id)
+      Rails.logger.tagged('Insight::RowHandler') do
+        patient = make_patient(row_hash)
+        visit = make_visit(row_hash, patient.id)
+        infection_tests = make_infection_tests(row_hash, visit.id)
 
-      patient
+        patient
+      end
+    end
+
+    Contract Hash, Num => ArrayOf[InfectionTest]
+    # Create or return {InfectionTest} records from row
+    # @api private
+    # @param row [Hash] hash containing row data
+    # @param visit_id [Fixnum] id of associated visit record
+    # @return [Array<Patient>] new or existing InfectionTest records
+    def make_infection_tests(row, visit_id)
+      {
+        :cttested    => 'Chlamydia',
+        :gctested    => 'Gonorrhea',
+        :hivtested   => 'HIV',
+        :trichtested => 'Trichomoniasis',
+        :syphtested  => 'Syphilis'
+      }.map do |key, infection_name|
+        value = row.fetch(key, nil)
+
+        if 1 == value.to_s.to_i
+          Rails.logger.info("Creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
+          output = Infection.where(name: infection_name).map do |infection|
+            InfectionTestFactory.new(
+              :name         => "#{infection_name} #{InfectionTest.model_name.human}",
+              :visit_id     => visit_id,
+              :infection_id => infection.id
+            ).make!
+          end
+        else
+          Rails.logger.info("Skipping creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
+          output = []
+        end
+
+        output
+      end.flatten
     end
 
     Contract Hash => Patient
