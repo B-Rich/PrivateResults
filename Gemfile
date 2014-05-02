@@ -29,10 +29,12 @@ group :development, :test do
   gem 'brakeman'
   gem 'dotenv'
   gem 'factory_girl_rails'
+  gem 'guard-rspec', require: false
   gem 'oink'
   gem 'pry-nav'
   gem 'quiet_assets'
   gem 'rails-erd'
+  gem 'rspec', '~> 3.0.0.beta'
   gem 'rspec-rails', '~> 3.0.0.beta'
   gem 'rubocop'
   gem 'yard'
