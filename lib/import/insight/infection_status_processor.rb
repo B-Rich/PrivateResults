@@ -1,8 +1,6 @@
 module Insight
   # Encapsulates logic for handling {InfectionTest} and {Result}
   # models in the object graph
-  #
-  # @api private
   class InfectionStatusProcessor
     include Contracts
     include ActiveModel::Model
@@ -26,6 +24,32 @@ module Insight
       :trichresult => 'Trichomoniasis',
       :syphresult  => 'Syphilis'
     }
+
+    # Process infection-related test and results for the row
+    # @api public
+    # @example
+    #  infection_status_processor.process!
+    # @return [NotSure] Not Sure
+    def process!
+      INFECTION_TEST_MAP.values.map do |infection_name|
+        Infection.where(name: infection_name).map do |infection|
+          if tested_for?(infection_name)
+            Rails.logger.info("Creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
+
+            output = InfectionTestFactory.new(
+              :name         => "#{infection_name} #{InfectionTest.model_name.human}",
+              :visit_id     => visit_id,
+              :infection_id => infection.id
+            ).make!
+          else
+            Rails.logger.info("Skipping creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
+            output = []
+          end
+
+          output
+        end
+      end.flatten
+    end
 
     Contract String => Bool
     # Determine if the patient on this visit was tested for a given infection

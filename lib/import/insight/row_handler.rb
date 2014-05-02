@@ -30,25 +30,7 @@ module Insight
     # @param visit_id [Fixnum] id of associated visit record
     # @return [Array<Patient>] new or existing InfectionTest records
     def make_infection_tests(row, visit_id)
-      Insight::InfectionStatusProcessor::INFECTION_TEST_MAP.map do |key, infection_name|
-        value = row.fetch(key, nil)
-
-        if 1 == value.to_s.to_i
-          Rails.logger.info("Creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
-          output = Infection.where(name: infection_name).map do |infection|
-            InfectionTestFactory.new(
-              :name         => "#{infection_name} #{InfectionTest.model_name.human}",
-              :visit_id     => visit_id,
-              :infection_id => infection.id
-            ).make!
-          end
-        else
-          Rails.logger.info("Skipping creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
-          output = []
-        end
-
-        output
-      end.flatten
+      Insight::InfectionStatusProcessor.new(row_hash: row, visit_id: visit_id).process!
     end
 
     Contract Hash => Patient
