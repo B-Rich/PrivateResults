@@ -59,5 +59,14 @@ describe Insight::InfectionStatusProcessor do
         }.to change(InfectionTest, :count).by(3)
       end
     end
+
+    context Result.model_name.human do
+      it 'creates the proper records' do
+        expect {
+          infection_status_processor.process!
+        }.to change(Result, :count).by(3)
+      end
+    end
   end
 end
+

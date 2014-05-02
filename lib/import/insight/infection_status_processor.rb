@@ -31,6 +31,14 @@ module Insight
     #  infection_status_processor.process!
     # @return [NotSure] Not Sure
     def process!
+      generate_infection_test_results(generate_infection_tests)
+    end
+
+    Contract nil => ArrayOf[InfectionTest]
+    # Process infection test data
+    # @api private
+    # @return [Array<InfectionTest>] the created or found {InfectionTest} models
+    def generate_infection_tests
       INFECTION_TEST_MAP.values.map do |infection_name|
         Infection.where(name: infection_name).map do |infection|
           if tested_for?(infection_name)
@@ -48,6 +56,30 @@ module Insight
 
           output
         end
+      end.flatten
+    end
+
+    Contract ArrayOf[InfectionTest] => ArrayOf[Result]
+    # Process InfectionTest records to produce corresponding Result records
+    # @api private
+    # @param infection_tests [Array<InfectionTest>] persisted InfectionTest records
+    # @return [Array<Result>] the constructed or found Result models
+    def generate_infection_test_results(infection_tests)
+      infection_tests.map do |infection_test|
+        positive_for_infection = positive_for?(infection_test.infection.name)
+
+        # check if boolean
+        if !!positive_for_infection == positive_for_infection
+          output = ResultFactory.new(
+            :name => 'blah',
+            :infection_test_id => infection_test.id,
+            :positive => positive_for_infection
+          ).make!
+        else
+          output = []
+        end
+
+        output
       end.flatten
     end
 

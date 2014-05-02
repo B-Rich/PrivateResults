@@ -17,19 +17,19 @@ module Insight
       Rails.logger.tagged('Insight::RowHandler') do
         patient = make_patient(row_hash)
         visit = make_visit(row_hash, patient.id)
-        infection_tests = make_infection_tests(row_hash, visit.id)
+        infection_tests = make_infection_status_graph(row_hash, visit.id)
 
         patient
       end
     end
 
-    Contract Hash, Num => ArrayOf[InfectionTest]
+    Contract Hash, Num => ArrayOf[Result]
     # Create or return {InfectionTest} records from row
     # @api private
     # @param row [Hash] hash containing row data
     # @param visit_id [Fixnum] id of associated visit record
     # @return [Array<Patient>] new or existing InfectionTest records
-    def make_infection_tests(row, visit_id)
+    def make_infection_status_graph(row, visit_id)
       Insight::InfectionStatusProcessor.new(row_hash: row, visit_id: visit_id).process!
     end
 
