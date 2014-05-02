@@ -109,6 +109,9 @@ GEM
     guard-rspec (4.2.8)
       guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
+    guard-yard (2.1.1)
+      guard (>= 1.1.0)
+      yard (>= 0.7.0)
     haml (4.0.5)
       tilt
     highline (1.6.21)
@@ -313,6 +316,7 @@ DEPENDENCIES
   dotenv
   factory_girl_rails
   guard-rspec
+  guard-yard
   jquery-rails
   launchy
   oink

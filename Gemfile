@@ -31,6 +31,7 @@ group :development, :test do
   gem 'dotenv'
   gem 'factory_girl_rails'
   gem 'guard-rspec', require: false
+  gem 'guard-yard'
   gem 'oink'
   gem 'pry-nav'
   gem 'quiet_assets'
