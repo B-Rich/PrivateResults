@@ -1,13 +1,7 @@
 require 'spec_helper'
 
 describe Insight::RowHandler do
-  let(:row_hash) { @row_hash }
-
-  before(:all) do
-    io = File.open(Rails.root.join('spec', 'data', 'test_import_data.csv').to_s, 'rb')
-    @row_hash = DataStreamImporter.new(stream: io).to_hashes.first
-    io.close
-  end
+  let(:row_hash) { row_hashes.first }
 
   let(:row_handler) { Insight::RowHandler.new(row_hash: row_hash) }
 

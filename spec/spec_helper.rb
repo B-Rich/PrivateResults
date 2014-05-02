@@ -44,3 +44,10 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 end
+
+ROW_HASH_STREAM = StringIO.new(File.read(Rails.root.join('spec', 'data', 'test_import_data.csv').to_s))
+ROW_HASHES = DataStreamImporter.new(stream: ROW_HASH_STREAM).to_hashes
+
+def row_hashes
+  ROW_HASHES
+end
