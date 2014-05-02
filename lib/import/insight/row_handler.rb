@@ -30,13 +30,7 @@ module Insight
     # @param visit_id [Fixnum] id of associated visit record
     # @return [Array<Patient>] new or existing InfectionTest records
     def make_infection_tests(row, visit_id)
-      {
-        :cttested    => 'Chlamydia',
-        :gctested    => 'Gonorrhea',
-        :hivtested   => 'HIV',
-        :trichtested => 'Trichomoniasis',
-        :syphtested  => 'Syphilis'
-      }.map do |key, infection_name|
+      Insight::InfectionStatusProcessor::INFECTION_TEST_MAP.map do |key, infection_name|
         value = row.fetch(key, nil)
 
         if 1 == value.to_s.to_i
