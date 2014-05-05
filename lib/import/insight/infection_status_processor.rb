@@ -42,13 +42,7 @@ module Insight
       INFECTION_TEST_MAP.values.map do |infection_name|
         Infection.where(name: infection_name).map do |infection|
           if tested_for?(infection_name)
-            Rails.logger.info("Creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
-
-            output = InfectionTestFactory.new(
-              :name         => "#{infection_name} #{InfectionTest.model_name.human}",
-              :visit_id     => visit_id,
-              :infection_id => infection.id
-            ).make!
+            output = generate_infection_test(visit_id, infection)
           else
             Rails.logger.info("Skipping creating #{InfectionTest.model_name.human.pluralize} for #{infection_name}")
             output = []
@@ -57,6 +51,22 @@ module Insight
           output
         end
       end.flatten
+    end
+
+    Contract Num, Infection => InfectionTest
+    # Generate an InfectionTest for a given {Infection}
+    # @api private
+    # @param visit_id [Num] the id of the visit
+    # @param infection [Infection] the corresponding infection for which to make the test
+    # @return [InfectionTest] new or created record
+    def generate_infection_test(visit_id, infection)
+      Rails.logger.info("Creating #{InfectionTest.model_name.human.pluralize} for #{infection.name}")
+
+      InfectionTestFactory.new(
+        :name         => "#{infection.name} #{InfectionTest.model_name.human}",
+        :visit_id     => visit_id,
+        :infection_id => infection.id
+      ).make!
     end
 
     Contract ArrayOf[InfectionTest] => ArrayOf[Result]
