@@ -45,8 +45,12 @@ RSpec.configure do |config|
   config.order = "random"
 end
 
-ROW_HASH_STREAM = StringIO.new(File.read(Rails.root.join('spec', 'data', 'test_import_data.csv').to_s))
-ROW_HASHES = DataStreamImporter.new(stream: ROW_HASH_STREAM).to_hashes
+if defined?(ROW_HASH_STREAM) && defined?(ROW_HASHES)
+  Rails.logger.info("ROW_HASH_STREAM and ROW_HASHES already defined")
+else
+  ROW_HASH_STREAM = StringIO.new(File.read(Rails.root.join('spec', 'data', 'test_import_data.csv').to_s))
+  ROW_HASHES = DataStreamImporter.new(stream: ROW_HASH_STREAM).to_hashes
+end
 
 def row_hashes
   ROW_HASHES
