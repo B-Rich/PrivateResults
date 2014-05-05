@@ -6,7 +6,7 @@ describe Insight::CsvImporter do
   let(:csv_importer) { Insight::CsvImporter.new(stream: stream) }
 
   before(:each) do
-    csv_importer.stub(:row_hashes => row_hashes)
+    allow(csv_importer).to receive(:row_hashes).and_return(row_hashes)
   end
 
   describe '#import!' do
