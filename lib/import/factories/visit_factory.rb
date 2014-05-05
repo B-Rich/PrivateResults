@@ -7,7 +7,7 @@ class VisitFactory
   # Defines the parsable date format for visited_on (visit_date)
   # @api private
   # @return [String] the format string
-  DATE_FORMAT_STRING = '%d-%b-%y'
+  DATE_FORMAT_STRING = '%d %b %y'
 
   attr_accessor :patient_id, :visit_date, :cosite, :sex, :race, :zip_code, :sexualpref, :sexualidentity, :age, :partners_last_6_months_5_or_more
 

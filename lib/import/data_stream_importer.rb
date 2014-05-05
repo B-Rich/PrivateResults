@@ -8,7 +8,7 @@ class DataStreamImporter
 
   attr_accessor :stream
 
-  Contract nil => ArrayOf[ArrayOf[Or[String,Num,nil]]]
+  Contract nil => Array
   # Loads CSV data from the IO stream using the CSV stdlib
   # @api private
   # @return [Array<Array<String,Num,nil>>] parsed CSV rows
@@ -16,7 +16,8 @@ class DataStreamImporter
     unless @rows.present?
       Rails.logger.info("Parsing #{stream.size} bytes of CSV stream")
       @rows ||= CSV.parse(stream.read)
-      header
+      Rails.logger.info("Parsed #{@rows.length} rows")
+      ap header
     end
 
     @rows
@@ -30,7 +31,7 @@ class DataStreamImporter
     @header ||= rows.shift.map(&:to_sym) if rows
   end
 
-  Contract nil => ArrayOf[HashOf[Symbol, Or[String,Num,nil]]]
+  Contract nil => Array
   # Provides CSV rows as hashes with column headers as keys
   # @api public
   # @example
@@ -40,6 +41,7 @@ class DataStreamImporter
     output = rows.map do |row|
       Hash[header.zip(row)]
     end
+    Rails.logger.info("Constructed #{output.length} hashes")
 
     output
   end

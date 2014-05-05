@@ -12,7 +12,7 @@ describe VisitFactory do
       :sex                              => "M",
       :sexualidentity                   => "Straight",
       :sexualpref                       => "Opposite sex",
-      :visit_date                       => "17-Nov-11",
+      :visit_date                       => "17 Nov 11",
       :zip_code                         => "21206"
     }
   end
