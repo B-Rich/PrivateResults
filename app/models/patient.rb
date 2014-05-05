@@ -14,6 +14,6 @@ class Patient < ActiveRecord::Base
 
   validates :patient_number, presence: true, uniqueness: true
 
-  has_many :visits
+  has_many :visits, dependent: :destroy
   has_paper_trail
 end

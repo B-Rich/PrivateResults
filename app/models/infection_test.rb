@@ -16,6 +16,7 @@ class InfectionTest < ActiveRecord::Base
 
   belongs_to :infection
   belongs_to :visit
+  has_many :results, dependent: :destroy
 
   validates :name, presence: true
   validates :infection_id, presence: true
