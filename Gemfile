@@ -10,6 +10,7 @@ gem 'active_model_serializers'
 gem 'awesome_print'
 gem 'contracts', git: 'https://github.com/egonSchiele/contracts.ruby.git'
 gem 'jquery-rails' # Use jquery as the JavaScript library
+gem 'oj'
 gem 'paper_trail'#, '~> 3.0.1'
 gem 'pg' # Use postgresql as the database for Active Record
 gem 'puma'
