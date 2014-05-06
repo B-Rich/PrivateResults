@@ -9,12 +9,14 @@ gem 'rails', '4.1.0'
 gem 'active_model_serializers'
 gem 'awesome_print'
 gem 'contracts', git: 'https://github.com/egonSchiele/contracts.ruby.git'
+gem 'hiredis'
 gem 'jquery-rails' # Use jquery as the JavaScript library
 gem 'oj'
 gem 'paper_trail'#, '~> 3.0.1'
 gem 'pg' # Use postgresql as the database for Active Record
 gem 'puma'
 gem 'rails-api'
+gem 'redis'
 gem 'sass-rails', '~> 4.0.3' # Use SCSS for stylesheets
 gem 'sdoc', '~> 0.4.0', group: :doc # bundle exec rake doc:rails generates the API under doc/api.
 gem 'spring', group: :development # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
