@@ -17,7 +17,7 @@ class DataStreamImporter
       Rails.logger.info("Parsing #{stream.size} bytes of CSV stream")
       @rows ||= CSV.parse(stream.read)
       Rails.logger.info("Parsed #{@rows.length} rows")
-      ap header
+      header
     end
 
     @rows
