@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140506140921) do
+ActiveRecord::Schema.define(version: 20140506141046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,10 @@ ActiveRecord::Schema.define(version: 20140506140921) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "results", ["infection_test_id"], name: "index_results_on_infection_test_id", using: :btree
+  add_index "results", ["name"], name: "index_results_on_name", using: :btree
+  add_index "results", ["positive"], name: "index_results_on_positive", using: :btree
 
   create_table "versions", force: true do |t|
     t.string   "item_type",  null: false
