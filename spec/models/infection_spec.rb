@@ -15,6 +15,8 @@ describe Infection do
   let(:infection) { FactoryGirl.build(:infection) }
 
   it { should be_versioned }
+  it { should have_many(:infection_tests) }
+  it { should have_many(:results).through(:infection_tests) }
 
   describe '#valid?' do
     it { should validate_presence_of(:name) }
