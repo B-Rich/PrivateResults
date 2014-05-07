@@ -28,4 +28,20 @@ describe Result do
       it { expect(result).to be_valid }
     end
   end
+
+  describe 'scopes' do
+    let(:results) do
+      (1..10).to_a.map {|i| FactoryGirl.create(:result, positive: (i % 2 == 0)) }
+    end
+
+    before(:each) { results }
+
+    describe '.positive' do
+      it { expect(Result.positive.count).to eq(5) }
+    end
+
+    describe '.negative' do
+      it { expect(Result.negative.count).to eq(5) }
+    end
+  end
 end

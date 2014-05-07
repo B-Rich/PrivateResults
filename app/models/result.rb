@@ -19,5 +19,8 @@ class Result < ActiveRecord::Base
   validates :name, presence: true
   validates :infection_test_id, presence: true
 
+  scope :positive, -> { where(positive: true) }
+  scope :negative, -> { where.not(positive: true) }
+
   has_paper_trail
 end
