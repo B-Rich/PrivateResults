@@ -22,7 +22,14 @@ describe InfectionActivitySummarizer do
   before(:each) { results }
 
   describe '#as_json' do
-    pending
+    subject { infection_activity_summarizer.as_json }
+
+    it do
+      should == {
+        :infection => infection.name,
+        :data      => [infection_activity_summarizer.infection_activity_hash_for_date(visit.visited_on)]
+      }
+    end
   end
 
   describe '#results' do
@@ -69,7 +76,8 @@ describe InfectionActivitySummarizer do
 
     it do
       should == {
-        :total => infection_tests.count,
+        :date    => date,
+        :total   => infection_tests.count,
         :results => infection_activity_summarizer.result_breakdown_hash_for_date(date)
       }
     end

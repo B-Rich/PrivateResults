@@ -10,9 +10,10 @@ class InfectionActivitySummarizer
   JSON_SCHEMA = {
     "$schema" => "http://json-schema.org/draft-04/schema#",
     :type       => "object",
-    :required   => %W{total results},
+    :required   => %W{date total results},
     :properties => {
       :total    => { type: 'integer' },
+      :name     => { type: 'string' },
       :results  => {
         :type       => 'object',
         :required   => %W{ positive negative total },
@@ -91,8 +92,21 @@ class InfectionActivitySummarizer
   # @return [Hash{Symbol => Fixnum,Hash}] breakdown hash
   def infection_activity_hash_for_date(date)
     {
-      :total => infection_tests_for_date(date).count,
+      :date    => date,
+      :total   => infection_tests_for_date(date).count,
       :results => result_breakdown_hash_for_date(date)
+    }
+  end
+
+  # Override of as_json
+  # @api public
+  # @example
+  #  infection_activity_summarizer.as_json
+  # @return [Hash] the ready-to-serialize hash
+  def as_json(options = {})
+    {
+      :infection => infection.name,
+      :data      => visits.pluck(:visited_on).map {|date| infection_activity_hash_for_date(date) }
     }
   end
 end
