@@ -7,6 +7,24 @@ class InfectionActivitySummarizer
 
   attr_accessor :infection, :from, :to
 
+  JSON_SCHEMA = {
+    "$schema" => "http://json-schema.org/draft-04/schema#",
+    :type       => "object",
+    :required   => %W{total results},
+    :properties => {
+      :total    => { type: 'integer' },
+      :results  => {
+        :type       => 'object',
+        :required   => %W{ positive negative total },
+        :properties => {
+          :positive => { type: 'integer' },
+          :negative => { type: 'integer' },
+          :total    => { type: 'integer' }
+        }
+      }
+    }
+  }
+
   # Gets results for the given infection within the provided time frame
   # @api private
   # @return [ActiveRecord::AssociationRelation<Result>]

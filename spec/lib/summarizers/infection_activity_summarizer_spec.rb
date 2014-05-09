@@ -64,13 +64,22 @@ describe InfectionActivitySummarizer do
 
   describe '#infection_activity_hash_for_date' do
     let(:date) { visit.visited_on }
-    subject { infection_activity_summarizer.infection_activity_hash_for_date(date) }
+    let(:output) { infection_activity_summarizer.infection_activity_hash_for_date(date) }
+    subject { output }
 
     it do
       should == {
         :total => infection_tests.count,
         :results => infection_activity_summarizer.result_breakdown_hash_for_date(date)
       }
+    end
+
+    context 'json schema' do
+      it 'validates' do
+        expect {
+          JSON::Validator.validate!(InfectionActivitySummarizer::JSON_SCHEMA, output)
+        }.not_to raise_error
+      end
     end
   end
 end
