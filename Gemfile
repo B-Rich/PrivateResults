@@ -8,6 +8,7 @@ gem 'rails', '4.1.1'
 
 gem 'active_model_serializers'
 gem 'awesome_print'
+gem "bower-rails", "~> 0.7.2"
 gem 'contracts', git: 'https://github.com/egonSchiele/contracts.ruby.git'
 gem 'hiredis'
 gem 'jquery-rails' # Use jquery as the JavaScript library

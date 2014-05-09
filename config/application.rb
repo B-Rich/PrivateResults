@@ -32,5 +32,7 @@ module PrivateResults
     # Prepend all log lines with the following tags.
     # config.log_tags = [ :subdomain, :uuid ]
     config.log_tags = [ :uuid ]
+
+    config.assets.paths << Rails.root.join("vendor", "bower_components")
   end
 end
