@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # root 'welcome#index'
   root to: 'home#index'
 
+  namespace :api do
+    resources :infection_activity_timelines
+  end
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

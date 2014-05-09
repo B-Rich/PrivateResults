@@ -28,5 +28,9 @@ module PrivateResults
     # config.i18n.default_locale = :de
 
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
+    # Prepend all log lines with the following tags.
+    # config.log_tags = [ :subdomain, :uuid ]
+    config.log_tags = [ :uuid ]
   end
 end
