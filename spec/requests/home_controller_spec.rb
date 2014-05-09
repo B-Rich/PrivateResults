@@ -3,9 +3,9 @@ require 'spec_helper'
 describe HomeController do
 
   describe 'GET /' do
-    it 'is a little teapot' do
+    it 'Gives the dashboard' do
       get('/')
-      expect(response.code).to eq('418')
+      expect(response.status).to eq(200)
     end
   end
 
