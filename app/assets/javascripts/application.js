@@ -16,4 +16,5 @@
 //= require angular/angular
 //= require d3/d3
 //= require n3-pie-chart/dist/pie-chart
+//= require n3-line-chart/dist/line-chart
 //= require_tree .
