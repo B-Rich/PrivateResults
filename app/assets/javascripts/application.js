@@ -14,4 +14,6 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require angular/angular
+//= require d3/d3
+//= require n3-pie-chart/dist/pie-chart
 //= require_tree .

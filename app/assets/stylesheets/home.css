@@ -94,3 +94,12 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+.dashboard-charts {
+    text-align: center;
+}
+
+.dashboard-chart {
+    height: 250px;
+    margin-bottom: 100px;
+}
