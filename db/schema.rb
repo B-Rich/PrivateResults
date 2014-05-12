@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140506213153) do
+ActiveRecord::Schema.define(version: 20140512155849) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,12 +55,16 @@ ActiveRecord::Schema.define(version: 20140506213153) do
     t.boolean  "positive",          default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "visit_id"
+    t.integer  "infection_id"
   end
 
+  add_index "results", ["infection_id"], name: "index_results_on_infection_id", using: :btree
   add_index "results", ["infection_test_id"], name: "index_results_on_infection_test_id", using: :btree
   add_index "results", ["name"], name: "index_results_on_name", using: :btree
   add_index "results", ["positive"], name: "index_results_on_positive", using: :btree
   add_index "results", ["uuid"], name: "index_results_on_uuid", using: :btree
+  add_index "results", ["visit_id"], name: "index_results_on_visit_id", using: :btree
 
   create_table "tests", force: true do |t|
     t.string   "name"
