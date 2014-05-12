@@ -30,10 +30,10 @@ class InfectionActivitySummarizer
   # @api private
   # @return [ActiveRecord::AssociationRelation<Result>]
   def results
-    @results ||= infection
-               .results
-               .joins(:visit)
-               .where(Visit.arel_table[:visited_on].in (from..to))
+    @results ||= Result
+               .where(visit_id: visits.pluck(:id))
+               .select(:visit_id, :id, :positive)
+               .includes(:visit)
   end
 
   # Results for a given date
@@ -41,15 +41,18 @@ class InfectionActivitySummarizer
   # @param date [Date] the date in question
   # @return [ActiveRecord::AssociationRelation<Result>]
   def results_for_date(date)
-    results.where(Visit.arel_table[:visited_on].eq date)
+    results_by_date[date]
   end
 
+  def results_by_date
+    @results_by_date ||= results.group_by {|result| result.visit.visited_on }
+  end
   # Visits for the infection during the given timeframe
   # @api private
   # @return [ActiveRecord::AssociationRelation<Visit>]
   def visits
     @visits ||= Visit
-              .joins(:infection_tests)
+              .joins(:infection_tests, :results)
               .where(visited_on: (from..to))
               .where(InfectionTest.arel_table[:infection_id].eq infection.id)
               .distinct
@@ -62,7 +65,7 @@ class InfectionActivitySummarizer
   # @param date [Date] the date in question
   # @return [Hash<Symbol,Fixnum>] breakdown hash
   def result_breakdown_hash_for_date(date)
-    result_statuses = results_for_date(date).pluck(:positive)
+    result_statuses = results_for_date(date).map(&:positive)
     {
       :total    => result_statuses.count,
       :positive => result_statuses.select(&:present?).count,
@@ -78,13 +81,18 @@ class InfectionActivitySummarizer
     @infection_tests ||= InfectionTest.where(id: results.pluck(:infection_test_id))
   end
 
+
+  def infection_tests_by_date
+    @infection_tests_by_date ||= infection_tests.includes(:visit).group_by {|infection_test| infection_test.visit.visited_on }
+  end
   # Infection tests for the infection on the given date
   #
   # @api private
   # @param date [Date] the date in question
   # @return [ActiveRecord::AssociationRelation<InfectionTest>]
   def infection_tests_for_date(date)
-    infection_tests.joins(:visit).where(Visit.arel_table[:visited_on].eq date)
+    #infection_tests.joins(:visit).where(Visit.arel_table[:visited_on].eq date)
+    infection_tests_by_date[date]
   end
 
   # Constructs an infection activity hash for a given date
@@ -94,7 +102,7 @@ class InfectionActivitySummarizer
   def infection_activity_hash_for_date(date)
     {
       :date    => date,
-      :total   => infection_tests_for_date(date).count,
+      :total   => infection_tests_for_date(date).map(&:id).count,
       :results => result_breakdown_hash_for_date(date)
     }
   end

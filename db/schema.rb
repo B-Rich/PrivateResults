@@ -66,6 +66,15 @@ ActiveRecord::Schema.define(version: 20140512163537) do
   add_index "results", ["uuid"], name: "index_results_on_uuid", using: :btree
   add_index "results", ["visit_id"], name: "index_results_on_visit_id", using: :btree
 
+  create_table "tests", force: true do |t|
+    t.string   "name"
+    t.integer  "infection_id"
+    t.integer  "visit_id"
+    t.uuid     "uuid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "versions", force: true do |t|
     t.string   "item_type",  null: false
     t.integer  "item_id",    null: false
