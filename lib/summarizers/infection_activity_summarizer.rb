@@ -62,10 +62,11 @@ class InfectionActivitySummarizer
   # @param date [Date] the date in question
   # @return [Hash<Symbol,Fixnum>] breakdown hash
   def result_breakdown_hash_for_date(date)
+    result_statuses = results_for_date(date).pluck(:positive)
     {
-      :total    => results_for_date(date).count,
-      :positive => results_for_date(date).positive.count,
-      :negative => results_for_date(date).negative.count
+      :total    => result_statuses.count,
+      :positive => result_statuses.select(&:present?).count,
+      :negative => result_statuses.reject(&:present?).count
     }
   end
 
@@ -74,7 +75,7 @@ class InfectionActivitySummarizer
   # @api private
   # @return [ActiveRecord::AssociationRelation<InfectionTest>]
   def infection_tests
-    InfectionTest.where(id: results.pluck(:infection_test_id))
+    @infection_tests ||= InfectionTest.where(id: results.pluck(:infection_test_id))
   end
 
   # Infection tests for the infection on the given date
