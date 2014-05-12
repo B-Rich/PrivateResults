@@ -26,7 +26,7 @@ FactoryGirl.define do
     race "White"
     sequence(:age) {|n| 13 + n }
     sequence(:partners_last_6_months_5_or_more) {|n| n }
-    sequence(:visited_on) {|n| n.weeks.ago }
+    sequence(:visited_on) {|n| 10.weeks.ago + n.minutes }
     sequence(:zip_code) {|n| "#{n}12345" }
     sex "M"
     sexual_identity "Straight"

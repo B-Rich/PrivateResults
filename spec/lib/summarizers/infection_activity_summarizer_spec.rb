@@ -25,12 +25,13 @@ describe InfectionActivitySummarizer do
 
   describe '#as_json' do
     subject { infection_activity_summarizer.as_json }
-
+    it { expect(Visit.count).to eq(1) }
+    it { expect(Result.count).to eq(5) }
     it do
-      should == {
+      should eq({
         :infection => infection.name,
         :data      => [infection_activity_summarizer.infection_activity_hash_for_date(visit.visited_on)]
-      }
+      })
     end
   end
 
