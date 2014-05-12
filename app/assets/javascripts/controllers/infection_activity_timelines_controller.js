@@ -4,7 +4,7 @@ window.PrivateResults.controller('InfectionActivityTimelinesController', functio
   $http({
     url: '/api/infection_activity_timelines',
     method: 'GET',
-    params: {'infection': 'HIV', 'from': '2010-01-01', 'to': '2010-05-31'}
+    params: {'infection': 'HIV', 'from': '2010-01-01', 'to': '2010-12-31'}
   })
     .success(function (data, status) {
       $scope.status = undefined;
