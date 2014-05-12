@@ -41,7 +41,7 @@ class InfectionActivitySummarizer
   # @param date [Date] the date in question
   # @return [ActiveRecord::AssociationRelation<Result>]
   def results_for_date(date)
-    results_by_date[date]
+    results_by_date.fetch(date, [])
   end
 
   def results_by_date
@@ -92,7 +92,7 @@ class InfectionActivitySummarizer
   # @return [ActiveRecord::AssociationRelation<InfectionTest>]
   def infection_tests_for_date(date)
     #infection_tests.joins(:visit).where(Visit.arel_table[:visited_on].eq date)
-    infection_tests_by_date[date]
+    infection_tests_by_date.fetch(date, [])
   end
 
   # Constructs an infection activity hash for a given date
