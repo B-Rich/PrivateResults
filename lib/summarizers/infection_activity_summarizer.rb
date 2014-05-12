@@ -44,9 +44,13 @@ class InfectionActivitySummarizer
     results_by_date.fetch(date, [])
   end
 
+  # Group {Result} records by {Visit} date
+  # @api private
+  # @return [Hash{Date=>Array<Result>}] results grouped by data
   def results_by_date
     @results_by_date ||= results.group_by {|result| result.visit.visited_on }
   end
+
   # Visits for the infection during the given timeframe
   # @api private
   # @return [ActiveRecord::AssociationRelation<Visit>]
@@ -81,7 +85,9 @@ class InfectionActivitySummarizer
     @infection_tests ||= InfectionTest.where(id: results.pluck(:infection_test_id))
   end
 
-
+  # Group and memoize {InfectionTest} records by {Visit} date
+  # @api private
+  # @return [Hash{Date=>Array<InfectionTest>}] infection tests grouped by data
   def infection_tests_by_date
     @infection_tests_by_date ||= infection_tests.includes(:visit).group_by {|infection_test| infection_test.visit.visited_on }
   end
