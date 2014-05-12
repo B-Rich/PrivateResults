@@ -17,15 +17,41 @@ describe Result do
   let(:result) { FactoryGirl.build(:result) }
 
   it { should belong_to(:infection_test) }
+  it { should belong_to(:visit) }
+  it { should belong_to(:infection) }
+
   it { should be_versioned }
 
   describe '#valid?' do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:infection_test_id) }
+    it { should validate_presence_of(:infection_id) }
+    it { should validate_presence_of(:visit_id) }
+
     it { expect(Result.ensures_uuid?).to eq(true) }
 
     context 'given valid attributes' do
       it { expect(result).to be_valid }
+    end
+
+    context 'given invalid attributes' do
+      context 'mismatched associations' do
+        context 'infection_id and infection_test.infection_d' do
+          before(:each) do
+            result.infection_id = FactoryGirl.create(:infection)
+          end
+          it { expect(result.infection_id).not_to eq(result.infection_test.infection_id) }
+          it { expect(result).not_to be_valid }
+        end
+
+        context 'visit_id and infection_test.vist_id' do
+          before(:each) do
+            result.visit_id = FactoryGirl.create(:visit)
+          end
+          it { expect(result.visit_id).not_to eq(result.infection_test.visit_id) }
+          it { expect(result).not_to be_valid }
+        end
+      end
     end
   end
 

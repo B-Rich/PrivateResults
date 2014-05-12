@@ -16,7 +16,7 @@ describe Infection do
 
   it { should be_versioned }
   it { should have_many(:infection_tests) }
-  it { should have_many(:results).through(:infection_tests) }
+  it { should have_many(:results) }
 
   describe '#valid?' do
     it { should validate_presence_of(:name) }

@@ -83,7 +83,9 @@ module Insight
           output = ResultFactory.new(
             :name => "#{Result.model_name.human} for #{InfectionTest.model_name.human} #{infection_test.infection.name}",
             :infection_test_id => infection_test.id,
-            :positive => positive_for_infection
+            :positive => positive_for_infection,
+            :infection_id => infection_test.infection_id,
+            :visit_id => infection_test.visit_id
           ).make!
         else
           output = []

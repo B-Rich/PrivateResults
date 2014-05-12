@@ -4,7 +4,7 @@ class ResultFactory
   include ActiveModel::Model
   include Contracts
 
-  attr_accessor :name, :infection_test_id, :positive
+  attr_accessor :name, :infection_test_id, :positive, :infection_id, :visit_id
 
   Contract nil => Result
   # Constructs model
@@ -16,7 +16,9 @@ class ResultFactory
     Result
       .where(:name => name,
              :infection_test_id => infection_test_id,
-             :positive => positive)
+             :positive => positive,
+             :visit_id => visit_id,
+             :infection_id => infection_id)
       .first_or_create!
   end
 end

@@ -25,6 +25,7 @@ describe Visit do
 
   it { should belong_to(:patient) }
   it { should have_many(:infection_tests) }
+  it { should have_many(:results) }
   it { should be_versioned }
 
   describe '#valid?' do

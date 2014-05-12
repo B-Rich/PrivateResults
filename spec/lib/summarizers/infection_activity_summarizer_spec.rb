@@ -11,7 +11,9 @@ describe InfectionActivitySummarizer do
 
   let(:results) { (1..5).to_a.map {|i| FactoryGirl.create(:result,
                                                           positive: (i % 2 == 0),
-                                                          infection_test: infection_tests[i-1]) } }
+                                                          infection_test: infection_tests[i-1],
+                                                          visit: visit,
+                                                          infection: infection) } }
 
   let(:from_date) { 1.year.ago }
   let(:to_date) { 1.year.from_now }

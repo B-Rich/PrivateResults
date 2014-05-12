@@ -15,7 +15,7 @@ class Infection < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
 
   has_many :infection_tests
-  has_many :results, through: :infection_tests
+  has_many :results
 
   has_paper_trail
 end

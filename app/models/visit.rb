@@ -23,6 +23,7 @@ class Visit < ActiveRecord::Base
 
   belongs_to :patient
   has_many :infection_tests, dependent: :destroy
+  has_many :results
 
   # Valid values for cosite attribute
   # @api public

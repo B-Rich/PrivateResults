@@ -20,5 +20,7 @@ FactoryGirl.define do
     positive false
 
     infection_test
+    visit
+    infection
   end
 end

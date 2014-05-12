@@ -2,11 +2,16 @@ require 'spec_helper'
 
 describe ResultFactory do
   let(:infection_test) { FactoryGirl.create(:infection_test) }
+  let(:infection) { FactoryGirl.create(:infection) }
+  let(:visit) { FactoryGirl.create(:visit) }
+
   let(:result_attributes) do
     {
       :name => "Result 123",
       :infection_test_id => infection_test.id,
-      :positive => true
+      :positive => true,
+      :infection_id => infection.id,
+      :visit_id => visit.id
     }
   end
 

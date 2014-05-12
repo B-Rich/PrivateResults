@@ -32,7 +32,7 @@ class InfectionActivitySummarizer
   def results
     @results ||= infection
                .results
-               .joins(:infection_test => :visit)
+               .joins(:visit)
                .where(Visit.arel_table[:visited_on].in (from..to))
   end
 
@@ -49,7 +49,7 @@ class InfectionActivitySummarizer
   # @return [ActiveRecord::AssociationRelation<Visit>]
   def visits
     @visits ||= Visit
-              .joins(:infection_tests => :results)
+              .joins(:infection_tests)
               .where(visited_on: (from..to))
               .where(InfectionTest.arel_table[:infection_id].eq infection.id)
               .distinct
