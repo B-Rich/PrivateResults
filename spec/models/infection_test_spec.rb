@@ -19,7 +19,7 @@ describe InfectionTest do
   it { should be_versioned }
   it { should belong_to(:infection) }
   it { should belong_to(:visit) }
-  it { should have_many(:results) }
+  it { should have_one(:result) }
 
   describe '#valid?' do
     it { should validate_presence_of(:name) }
