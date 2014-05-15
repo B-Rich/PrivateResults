@@ -6,6 +6,16 @@ class CoinfectionSummarizer
   attr_accessor :infection
 
   Contract nil => Hash
+  # Master table of all coinfections for every {Infection}
+  # @api public
+  # @return [Hash<String,Hash<String,Fixnum>>] table of all coinfection hashes
+  def self.coinfection_table
+    Infection.all.each_with_object({}) do |infection, hash|
+      hash[infection.name] = new(infection: infection).coinfection_hash
+    end
+  end
+
+  Contract nil => Hash
   # Gives the coinfection rate for the provided {Infection} as a Hash
   #
   # @api public
@@ -30,6 +40,7 @@ class CoinfectionSummarizer
     @infections ||= Infection.all
   end
 
+  Contract nil => ArrayOf[Num]
   # The ids of {Patient} records infected with the master {Infection}
   # @api private
   # @return [Array<Fixnum>] all infected patient ids (unique)

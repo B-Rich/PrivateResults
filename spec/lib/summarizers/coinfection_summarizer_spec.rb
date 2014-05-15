@@ -14,4 +14,14 @@ describe CoinfectionSummarizer do
 
     it { expect(output.keys.sort).to eq(Infection.pluck(:name).sort) }
   end
+
+  describe '.coinfection_table' do
+    let(:output) { CoinfectionSummarizer.coinfection_table }
+
+    it { expect(output.keys.sort).to eq(Infection.pluck(:name).sort) }
+
+    Infection.all.each do |infection|
+      it { expect(output[infection.name]).to eq(CoinfectionSummarizer.new(infection: infection).coinfection_hash) }
+    end
+  end
 end
