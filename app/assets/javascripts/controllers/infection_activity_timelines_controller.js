@@ -1,6 +1,5 @@
-window.PrivateResults = window.PrivateResults || angular.module('PrivateResults', ['n3-pie-chart', 'n3-line-chart']);
-
-window.PrivateResults.controller('InfectionActivityTimelinesController', function ($scope, $http, $log) {
+console.log('InfectionActivityTimelinesController');
+angular.module('PrivateResults').controller('InfectionActivityTimelinesController', function ($scope, $http) {
   $http({
     url: '/api/infection_activity_timelines',
     method: 'GET',
@@ -55,9 +54,6 @@ window.PrivateResults.controller('InfectionActivityTimelinesController', functio
               },
         tension: 0.7
       };
-
-      console.log($scope.timeline_data);
-      console.log($scope.timeline_options);
     })
     .error(function (data, status) {
       $scope.status = status;

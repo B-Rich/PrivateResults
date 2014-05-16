@@ -23,6 +23,7 @@ class CoinfectionSummarizer
   #  coinfection_summarizer.coinfection_hash
   # @return [Hash{String=>Fixnum}] Hash with coinfection rates
   def coinfection_hash
+    Rails.logger.info("Calculating coinfection table for #{infection.name}")
     infections.map do |potential_coinfection|
       count = base_query
               .where(id: infected_patient_ids)

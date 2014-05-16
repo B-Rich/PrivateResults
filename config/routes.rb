@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   namespace :api do
+    resources :coinfection_tables
     resources :infection_activity_timelines
   end
   # Example of regular route:

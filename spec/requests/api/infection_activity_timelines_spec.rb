@@ -16,7 +16,7 @@ describe Api::InfectionActivityTimelinesController do
         {
           :from => 1.year.ago,
           :to   => Date.today,
-          :infection => (Infection.first.name || FactoryGirl.create(:infection))
+          :infection => (Infection.first.name || FactoryGirl.create(:infection).name)
         }
       end
 
