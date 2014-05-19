@@ -20,3 +20,10 @@ config/database.yml
 erd.pdf
 .yardoc
 /doc
+
+# latex stuff
+/planning/*.aux
+/planning/*.log
+/planning/*.fls
+/planning/*.pdf
+/planning/*.fdb_latexmk
