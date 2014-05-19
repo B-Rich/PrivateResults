@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::InfectionActivityTimelinesController do
+describe Api::InfectionActivityTimelinesController, type: :request do
   let(:path) { '/api/infection_activity_timelines' }
   describe 'GET' do
     context 'given invalid parameters' do

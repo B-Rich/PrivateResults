@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::CoinfectionTablesController do
+describe Api::CoinfectionTablesController, :type => :request do
   let(:path) { '/api/coinfection_tables' }
 
   describe 'GET' do
