@@ -6,7 +6,9 @@
 \begin{ganttchart}[
     vgrid={draw=none, dotted},
     hgrid,
-    x unit = 0.75cm
+    x unit = 0.75cm,
+    today=5,
+    today label=Now
   ]{1}{14}
   \gantttitle{Private Results Deliverables Timeline}{14} \\
   \gantttitle{}{1}
@@ -15,16 +17,16 @@
   \gantttitle{July}{4} \\
   \gantttitlelist{1,...,14}{1} \\
 
-  \ganttgroup{Core Dev}{1}{6}
+  \ganttgroup[progress=85]{Core Dev}{1}{6}
   \ganttgroup{}{11}{14} \\
 
-  \ganttbar{Info Architecture}{1}{2} \\
-  \ganttbar{CSV Import}{1}{3} \\
+  \ganttbar[progress=100]{Info Architecture}{1}{2} \\
+  \ganttbar[progress=100]{CSV Import}{1}{3} \\
   \ganttbar{Interviews}{2}{3}
-  \ganttbar{}{5}{5} \\
-  \ganttbar{API}{3}{6} \\
-  \ganttbar{Data Viz Demo}{4}{7} \\
-  \ganttgroup{Knight Prep}{6}{10} \\
+  \ganttbar[progress=100]{}{5}{5} \\
+  \ganttbar[progress=75]{API}{3}{6} \\
+  \ganttbar[progress=75]{Data Viz Demo}{4}{7} \\
+  \ganttgroup[progress=15]{Knight Prep}{6}{10} \\
   \ganttbar{Knight Slides}{6}{8} \\
   \ganttlinkedmilestone{Knight Demo!}{8} \\
   \ganttlinkedbar{Knight Writeup}{9}{10} \\
