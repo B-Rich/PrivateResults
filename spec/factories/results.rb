@@ -9,6 +9,8 @@
 #  positive          :boolean          default(TRUE), not null
 #  created_at        :datetime
 #  updated_at        :datetime
+#  visit_id          :integer
+#  infection_id      :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
