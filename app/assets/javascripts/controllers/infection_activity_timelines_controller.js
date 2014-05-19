@@ -42,10 +42,10 @@ angular.module('PrivateResults').controller('InfectionActivityTimelinesControlle
       $scope.timeline_options = {
         lineMode: 'linear',
         series: [
-          {y: 'tests_total', label: 'Total Tests', type: 'line', color: '#428bca'},
-          {y: 'results_total', label: 'Total Results', type: 'line', color: '#5bc0de'},
-          {y: 'results_positive', label: 'Positive', type: 'area', color: '#d9534f'},
-          {y: 'results_negative', label: 'Negative', type: 'line', color: '#5cb85c'}
+//          {y: 'tests_total', label: 'Total Tests', type: 'line', color: '#428bca'},
+  //        {y: 'results_total', label: 'Total Results', type: 'line', color: '#5bc0de'},
+          {y: 'results_positive', label: 'Positive', type: 'area', color: '#d9534f'}//,
+//          {y: 'results_negative', label: 'Negative', type: 'line', color: '#5cb85c'}
         ],
         axes: {x:
                {type: "date", key: "date", labelFunction: function (date) {
