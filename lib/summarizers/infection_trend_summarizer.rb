@@ -14,6 +14,7 @@ class InfectionTrendSummarizer
   # @api public
   # @return [Hash{String => Array<Fixnum>}]
   def infection_trends
+    Rails.logger.info("Generating #{Infection.model_name.human} trends for: #{infections.map(&:name).join(', ')}")
     infections.each_with_object({}) do |infection, hash|
       hash[infection.name] = infection_counts(infection)
     end
@@ -24,6 +25,7 @@ class InfectionTrendSummarizer
   # @api private
   # @return [Hash{Date => Fixnum}] The date/value hash
   def infection_counts(infection)
+    Rails.logger.info("Calculating trends for #{Infection.model_name.human} #{infection.name} from #{from} -- #{to}")
     (from.to_date..to.to_date).step(INTERVAL).each_with_object({}) do |date, hash|
       range = (date..(date + (INTERVAL - 1).days).to_date)
 

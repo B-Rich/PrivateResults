@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :coinfection_tables
     resources :infection_activity_timelines
+    resources :infection_trends
   end
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
