@@ -45,7 +45,7 @@ angular.module('PrivateResults').controller('InfectionTrendsController', functio
         axes: {x:
                {key: "date",
                 labelFunction: function (date) {
-                 return moment(date).format('YYYY-MM-DD');//.setDate(01);
+                 return moment(date).format('MMM');//.setDate(01);
                 },
                 tooltipFormatter: function (d) {
                   return moment(d).format('YYYY-MM-DD');
