@@ -5,9 +5,6 @@ angular.module('PrivateResults').controller('CoinfectionTablesController', funct
     .success(function (data, status) {
       $scope.infection_names = Object.keys(data).sort();
       $scope.coinfection_rows = data;
-
-      console.log($scope.coinfection_rows);
-      console.log($scope.infection_names);
     })
     .error(function (data, status) {});
 

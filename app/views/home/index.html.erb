@@ -68,6 +68,16 @@
 
       <div data-ng-controller="InfectionActivityTimelinesController">
           <h1 class="page-header">Dashboard</h1>
+          <div class="row dashboard-charts" data-ng-controller="InfectionTrendsController">
+            <div class="col-sm-4 col-md-4 dashboard-chart">
+              <img class="img-rounded" src="http://placekitten.com/200/200" alt="placekitten!" />
+            </div>
+
+            <div class="col-sm-8 col-md-8 dashboard-chart">
+              <linechart data="infection_trend_data"
+                         options="infection_trend_options"></linechart>
+            </div>
+          </div>
 
           <div class="row dashboard-charts">
             <div class="col-sm-4 col-md-4 dashboard-chart">
