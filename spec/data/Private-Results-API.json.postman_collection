@@ -4,7 +4,8 @@
 	"description": "",
 	"order": [
 		"17acf0d0-f569-5eed-f73a-dd7183bf221d",
-		"aeded9e9-610a-c78c-8b1a-227de326a503"
+		"aeded9e9-610a-c78c-8b1a-227de326a503",
+		"22041111-37ed-f08f-dec6-9618c53595ee"
 	],
 	"folders": [],
 	"timestamp": 1401390884487,
@@ -28,6 +29,24 @@
 			"synced": false
 		},
 		{
+			"id": "22041111-37ed-f08f-dec6-9618c53595ee",
+			"headers": "",
+			"url": "http://{{host}}/api/coinfection_tables",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"name": "Coinfection Tables",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1401398811488,
+			"version": 2,
+			"responses": [],
+			"tests": "tests[\"Content-Type is  UTF-8 application/json\"] = responseHeaders.hasOwnProperty(\"Content-Type\") && 'application/json; charset=utf-8' === responseHeaders['Content-Type'];\n\n\ntests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Body is not blank\"] = responseBody !== \" \" && responseBody !== \"\";\n\n\nvar data = JSON.parse(responseBody);\n[\n  \"Chlamydia\",\n  \"Gonorrhea\",\n  \"HIV\",\n  \"Syphilis\",\n  \"Trichomoniasis\"\n].forEach(function (infection_name) {\n  var inclusion_test_name = _.template(\"JSON data contains ${name}\",\n                                 \t   {name: infection_name}),\n      value_presence_test_name = _.template(\"JSON data contains values for ${name}\",\n                                       {name: infection_name});\n  \n  tests[inclusion_test_name] = _.include(Object.keys(data), infection_name);\n  tests[value_presence_test_name] = _.size(data[infection_name]) > 0;\n});",
+			"collectionId": "63f8b743-2142-1b1b-cb81-ea6fd5ccd7a9",
+			"synced": false
+		},
+		{
 			"id": "aeded9e9-610a-c78c-8b1a-227de326a503",
 			"headers": "",
 			"url": "http://{{host}}/api/infection_trends?from={{from_date}}&to={{to_date}}",
@@ -37,7 +56,7 @@
 			"dataMode": "params",
 			"version": 2,
 			"tests": "tests[\"Content-Type is  UTF-8 application/json\"] = responseHeaders.hasOwnProperty(\"Content-Type\") && 'application/json; charset=utf-8' === responseHeaders['Content-Type'];\n\n\ntests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Body is not blank\"] = responseBody !== \" \" && responseBody !== \"\";\n\n\nvar data = JSON.parse(responseBody);\n[\n  \"Chlamydia\",\n  \"Gonorrhea\",\n  \"HIV\",\n  \"Syphilis\",\n  \"Trichomoniasis\"\n].forEach(function (infection_name) {\n  var test_name = _.template(\"JSON data contains ${name}\", {name: infection_name});\n  tests[test_name] = _.include(Object.keys(data), infection_name);\n});",
-			"time": 1401393204906,
+			"time": 1401393917355,
 			"name": "Infection Trends Timeline",
 			"description": "",
 			"collectionId": "63f8b743-2142-1b1b-cb81-ea6fd5ccd7a9",
