@@ -6,7 +6,8 @@
 		"17acf0d0-f569-5eed-f73a-dd7183bf221d",
 		"aeded9e9-610a-c78c-8b1a-227de326a503",
 		"22041111-37ed-f08f-dec6-9618c53595ee",
-		"621e97aa-b8c5-cfee-feb2-196b958f5b45"
+		"621e97aa-b8c5-cfee-feb2-196b958f5b45",
+		"ffffdf53-ead3-bd37-3450-3712ea68b8c2"
 	],
 	"folders": [],
 	"timestamp": 1401390884487,
@@ -55,14 +56,13 @@
 			"method": "GET",
 			"data": [],
 			"dataMode": "params",
+			"version": 2,
+			"tests": "tests[\"Content-Type is UTF-8 application/json\"] = responseHeaders.hasOwnProperty(\"Content-Type\") && 'application/json; charset=utf-8' === responseHeaders['Content-Type'];\n\n\ntests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Body is not blank\"] = responseBody !== \" \" && responseBody !== \"\";\n\nvar data = JSON.parse(responseBody);\n\ntests[\"Has infection name\"] = data.hasOwnProperty('infection') && 'HIV' === data.infection;\n\ntests['Contains results'] = data.hasOwnProperty('data') && _.isArray(data.data) && 0 < data.data.length;\n\ntests['Results have date'] = _(data.data).chain().forEach(function (result_object) {\n   return result_object.hasOwnProperty('date') && _.isString(result_object.date);\n}).all();\n\ntests['Results have total'] = _(data.data).chain().forEach(function (result_object) {\n   return result_object.hasOwnProperty('total') && _.isNumber(result_object.total);\n}).all();",
+			"time": 1401401182287,
 			"name": "Infection Activity Timelines",
 			"description": "",
-			"descriptionFormat": "html",
-			"time": 1401400396591,
-			"version": 2,
-			"responses": [],
-			"tests": "tests[\"Content-Type is UTF-8 application/json\"] = responseHeaders.hasOwnProperty(\"Content-Type\") && 'application/json; charset=utf-8' === responseHeaders['Content-Type'];\n\n\ntests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Body is not blank\"] = responseBody !== \" \" && responseBody !== \"\";\n\nvar data = JSON.parse(responseBody);\n\ntests[\"Has infection name\"] = data.hasOwnProperty('infection') && 'HIV' === data.infection;\n\ntests['Contains results'] = data.hasOwnProperty('data') && _.isArray(data.data) && 0 < data.data.length;\n\ntests['Results have date'] = _(data.data).chain().forEach(function (result_object) {\n   return result_object.hasOwnProperty('date') && _.isString(result_object.date);\n}).all();\n\ntests['Results have total'] = _(data.data).chain().forEach(function (result_object) {\n   return result_object.hasOwnProperty('total') && _.isNumber(result_object.total);\n}).all();",
 			"collectionId": "63f8b743-2142-1b1b-cb81-ea6fd5ccd7a9",
+			"responses": [],
 			"synced": false
 		},
 		{
@@ -80,6 +80,24 @@
 			"description": "",
 			"collectionId": "63f8b743-2142-1b1b-cb81-ea6fd5ccd7a9",
 			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "ffffdf53-ead3-bd37-3450-3712ea68b8c2",
+			"headers": "",
+			"url": "http://{{host}}/api/infection_activity_timelines",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"name": "Infection Activity Timelines (No Params)",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1401401208559,
+			"version": 2,
+			"responses": [],
+			"tests": "tests[\"Content-Type is text/html\"] = responseHeaders.hasOwnProperty(\"Content-Type\") && 'text/html' === responseHeaders['Content-Type'];\n\n\ntests[\"Status code is 400\"] = responseCode.code === 400;\n\ntests[\"Body is blank\"] = responseBody === \" \";\n\n\n\ntests[\"Response time is less than 200ms\"] = responseTime < 200;",
+			"collectionId": "63f8b743-2142-1b1b-cb81-ea6fd5ccd7a9",
 			"synced": false
 		}
 	]
