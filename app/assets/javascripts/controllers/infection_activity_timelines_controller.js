@@ -48,12 +48,17 @@ angular.module('PrivateResults').controller('InfectionActivityTimelinesControlle
 //          {y: 'results_negative', label: 'Negative', type: 'line', color: '#5cb85c'}
         ],
         axes: {x:
-               {type: "date", key: "date", labelFunction: function (date) {
-                 return date.setDate(01);
-               }}
+               {key: "date",
+                labelFunction: function (date) {
+                  return moment(date).format('MMM');//.setDate(01);
+                },
+                tooltipFormatter: function (d) {
+                  return moment(d).format('YYYY-MM-DD');
+                }
+               }
               },
         tension: 0.7
-      };
+      }
     })
     .error(function (data, status) {
       $scope.status = status;

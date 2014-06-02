@@ -48,8 +48,9 @@
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <h1 class="page-header">Dashboard</h1>
       <div class="row">
-        <h2>Coinfections</h2>
+        <h3>Coinfections</h3>
         <table class="table" data-ng-controller="CoinfectionTablesController">
           <thead>
             <th></th>
@@ -67,7 +68,6 @@
       </div>
 
       <div data-ng-controller="InfectionActivityTimelinesController">
-          <h1 class="page-header">Dashboard</h1>
           <div class="row dashboard-charts" data-ng-controller="InfectionTrendsController">
             <div class="col-sm-4 col-md-4 dashboard-chart">
               <img class="img-rounded" src="http://placekitten.com/200/200" alt="placekitten!" />
@@ -81,22 +81,23 @@
             </div>
           </div>
 
+          <h2 class="sub-header">{{data.infection}}</h2>
           <div class="row dashboard-charts">
             <div class="col-sm-4 col-md-4 dashboard-chart">
+              <h3>Result Breakdown</h3>
               <pie-chart data="positive_negative_pie_data"
                          options="positive_negative_pie_options"></pie-chart>
-              <h3>Positive/Negative</h3>
             </div>
 
             <div class="col-sm-8 col-md-8">
+              <h4>Positive {{data.infection}} infections</h4>
               <linechart data="timeline_data"
                          options="timeline_options"
                          mode=""></linechart>
-              <h3>Timeline</h3>
+              <p>x = months, y = positive results</p>
             </div>
           </div>
 
-          <h2 class="sub-header">{{data.infection}}</h2>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
