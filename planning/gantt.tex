@@ -2,6 +2,21 @@
 \usepackage{pgfgantt}
 \usepackage{fullpage}
 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lfoot{Sexual Health Innovations}
+\cfoot{NOT FOR RELEASE}
+\rfoot{Generated \today}
+
+\lhead{Sexual Health Innovations}
+\chead{NOT FOR RELEASE}
+\rhead{Generated \today}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headsep}{30pt}
+
+
 \begin{document}
 \begin{ganttchart}[
     vgrid={draw=none, dotted},
@@ -16,13 +31,14 @@
   \gantttitle{August}{4} \\
   \gantttitlelist{1,...,11}{1} \\
 
-  \ganttgroup{Core Dev}{5}{11} \\
 %  \ganttgroup{}{11}{14} \\
   \ganttgroup[progress=80]{Knight Work}{1}{3}\\
   \ganttbar[progress=100]{Knight Slides}{1}{1} \\
   \ganttlinkedmilestone{Knight Demo!}{1} \\
   \ganttlinkedbar[progress=50]{Knight Writeup}{2}{3} \\
   \ganttlinkedmilestone{Knight Final!}{3} \ganttnewline[thick, blue]
+
+  \ganttgroup{Core Dev}{5}{11} \\
 
   \ganttbar{Tech Debt}{4}{5} \\
   \ganttmilestone{Site Visit}{5} \\
