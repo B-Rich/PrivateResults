@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     resources :infection_activity_timelines
     resources :infection_trends
   end
+
+  resources :dashboards
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
