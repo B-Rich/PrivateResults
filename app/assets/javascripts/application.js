@@ -19,6 +19,7 @@
 //= require n3-line-chart/dist/line-chart
 //= require lodash/dist/lodash
 //= require moment/moment
+//= require holder/holder
 //= require private_results
 //= require_tree .
 
