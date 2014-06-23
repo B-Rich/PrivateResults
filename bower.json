@@ -13,7 +13,8 @@
       "angular"       : "https://github.com/angular/bower-angular.git",
       "lodash"        : "git://github.com/lodash/lodash.git",
       "n3-pie-chart"  : "https://github.com/n3-charts/pie-chart.git",
-      "n3-line-chart" : "https://github.com/n3-charts/line-chart.git"
+      "n3-line-chart" : "https://github.com/n3-charts/line-chart.git",
+      "holder"        : "https://github.com/imsky/holder.git"
     }
   }
 }

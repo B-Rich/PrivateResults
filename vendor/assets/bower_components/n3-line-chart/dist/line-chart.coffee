@@ -1,5 +1,5 @@
 ###
-line-chart - v1.0.6 - 01 May 2014
+line-chart - v1.0.8 - 18 June 2014
 https://github.com/n3-charts/line-chart
 Copyright (c) 2014 n3-charts
 ###
@@ -13,13 +13,14 @@ directive = (name, conf) ->
 
 directive('linechart', ['n3utils', '$window', '$timeout', (n3utils, $window, $timeout) ->
   link  = (scope, element, attrs, ctrl) ->
-    dim = n3utils.getDefaultMargins()
+    _u = n3utils
+    dim = _u.getDefaultMargins()
 
     scope.updateDimensions = (dimensions) ->
-      top = n3utils.getPixelCssProp(element[0].parentElement, 'padding-top')
-      bottom = n3utils.getPixelCssProp(element[0].parentElement, 'padding-bottom')
-      left = n3utils.getPixelCssProp(element[0].parentElement, 'padding-left')
-      right = n3utils.getPixelCssProp(element[0].parentElement, 'padding-right')
+      top = _u.getPixelCssProp(element[0].parentElement, 'padding-top')
+      bottom = _u.getPixelCssProp(element[0].parentElement, 'padding-bottom')
+      left = _u.getPixelCssProp(element[0].parentElement, 'padding-left')
+      right = _u.getPixelCssProp(element[0].parentElement, 'padding-right')
       dimensions.width = (element[0].parentElement.offsetWidth || 900) - left - right
       dimensions.height = (element[0].parentElement.offsetHeight || 500) - top - bottom
 
@@ -27,53 +28,73 @@ directive('linechart', ['n3utils', '$window', '$timeout', (n3utils, $window, $ti
       scope.updateDimensions(dim)
       scope.redraw(dim)
 
+
+    isUpdatingOptions = false
+    initialHandlers =
+      onSeriesVisibilityChange: ({series, index, newVisibility}) ->
+        isUpdatingOptions = true
+        scope.options.series[index].visible = newVisibility
+        scope.$apply()
+        isUpdatingOptions = false
+
     scope.redraw = (dimensions) ->
-      options = n3utils.sanitizeOptions(scope.options)
-      data = scope.data
-      series = options.series
-      dataPerSeries = n3utils.getDataPerSeries(data, options)
+      options = _u.sanitizeOptions(scope.options, attrs.mode)
+      handlers = angular.extend(initialHandlers, _u.getTooltipHandlers(options))
+      dataPerSeries = _u.getDataPerSeries(scope.data, options)
+
       isThumbnail = attrs.mode is 'thumbnail'
 
-      n3utils.clean(element[0])
+      _u.clean(element[0])
 
-      svg = n3utils.bootstrap(element[0], dimensions)
-      axes = n3utils
+      svg = _u.bootstrap(element[0], dimensions)
+      axes = _u
         .createAxes(svg, dimensions, options.axes)
         .andAddThemIf(isThumbnail)
 
       if dataPerSeries.length
-        n3utils.setScalesDomain(axes, data, options.series, svg, options.axes)
+        _u.setScalesDomain(axes, scope.data, options.series, svg, options.axes)
 
       if isThumbnail
-        n3utils.adjustMarginsForThumbnail(dimensions, axes)
+        _u.adjustMarginsForThumbnail(dimensions, axes)
       else
-        n3utils.adjustMargins(dimensions, options, data)
+        _u.adjustMargins(dimensions, options, scope.data)
 
-      n3utils.createContent(svg)
-
-      n3utils.drawLegend(svg, series, dimensions) unless isThumbnail
+      _u.createContent(svg, handlers)
 
       if dataPerSeries.length
-        columnWidth = n3utils.getBestColumnWidth(dimensions, dataPerSeries)
+        columnWidth = _u.getBestColumnWidth(dimensions, dataPerSeries)
 
-        n3utils
-          .drawArea(svg, axes, dataPerSeries, options)
-          .drawColumns(svg, axes, dataPerSeries, columnWidth)
-          .drawLines(svg, axes, dataPerSeries, options)
+        _u
+          .drawArea(svg, axes, dataPerSeries, options, handlers)
+          .drawColumns(svg, axes, dataPerSeries, columnWidth, handlers)
+          .drawLines(svg, axes, dataPerSeries, options, handlers)
 
-        n3utils.drawDots(svg, axes, dataPerSeries) unless isThumbnail
+        if options.drawDots
+          _u.drawDots(svg, axes, dataPerSeries, options, handlers)
 
-      n3utils.addTooltips(svg, dimensions, options.axes) unless isThumbnail
+      if options.drawLegend
+        _u.drawLegend(svg, options.series, dimensions, handlers)
 
-    timeoutPromise = undefined
+      if options.tooltipMode is 'scrubber'
+        _u.createGlass(svg, dimensions, handlers, axes, dataPerSeries)
+      else if options.tooltipMode isnt 'none'
+        _u.addTooltips(svg, dimensions, options.axes)
+
+
+
+
+    promise = undefined
     window_resize = ->
-      $timeout.cancel(timeoutPromise)
-      timeoutPromise = $timeout(scope.update, 1)
+      $timeout.cancel(promise) if promise?
+      promise = $timeout(scope.update, 1)
 
     $window.addEventListener('resize', window_resize)
 
-    scope.$watch('data', scope.update)
-    scope.$watch('options', scope.update, true)
+    scope.$watch('data', scope.update, true)
+    scope.$watch('options', (v) ->
+      return if isUpdatingOptions
+      scope.update()
+    , true)
 
   return {
     replace: true
@@ -89,7 +110,7 @@ directive('linechart', ['n3utils', '$window', '$timeout', (n3utils, $window, $ti
 # /tmp/utils.coffee
 mod = angular.module('n3charts.utils', [])
 
-mod.factory('n3utils', ['$window', ($window) ->
+mod.factory('n3utils', ['$window', '$log', '$rootScope', ($window, $log, $rootScope) ->
   return {
 # lib/utils/areas.coffee
       addPattern: (svg, series) ->
@@ -167,37 +188,35 @@ mod.factory('n3utils', ['$window', ($window) ->
 
 
 # lib/utils/columns.coffee
-      getBestColumnWidth: (dimensions, data) ->
-        return 10 unless data and data.length isnt 0
+      getBestColumnWidth: (dimensions, seriesData) ->
+        return 10 unless seriesData and seriesData.length isnt 0
 
         # +2 because abscissas will be extended to one more row at each end
-        n = data[0].values.length + 2
-        seriesCount = data.length
+        n = seriesData[0].values.length + 2
+        seriesCount = seriesData.length
         gap = 0 # space between two rows
         avWidth = dimensions.width - dimensions.left - dimensions.right
 
         return parseInt(Math.max((avWidth - (n - 1)*gap) / (n*seriesCount), 5))
 
-      drawColumns: (svg, axes, data, columnWidth) ->
+      drawColumns: (svg, axes, data, columnWidth, handlers) ->
         data = data.filter (s) -> s.type is 'column'
 
         x1 = d3.scale.ordinal()
-          .domain(data.map (s) -> s.name)
-          .rangeRoundBands([0, data.length * columnWidth], 0.05)
-
-        that = this
+          .domain(data.map (s) -> s.name + s.index)
+          .rangeBands([0, data.length * columnWidth], 0)
 
         colGroup = svg.select('.content').selectAll('.columnGroup')
           .data(data)
           .enter().append("g")
             .attr('class', (s) -> 'columnGroup ' + 'series_' + s.index)
-            .style("fill", (s) -> s.color)
-            .style("fill-opacity", 0.8)
-            .attr("transform", (s) -> "translate(" + (x1(s.name) - data.length*columnWidth/2) + ",0)")
+            .style('fill', (s) -> s.color)
+            .style('fill-opacity', 0.8)
+            .attr('transform', (s) -> "translate(" + (x1(s.name + s.index) - data.length*columnWidth/2) + ",0)")
             .on('mouseover', (series) ->
               target = d3.select(d3.event.target)
 
-              that.onMouseOver(svg, {
+              handlers.onMouseOver?(svg, {
                 series: series
                 x: target.attr('x')
                 y: axes[series.axis + 'Scale'](target.datum().value)
@@ -206,7 +225,7 @@ mod.factory('n3utils', ['$window', ($window) ->
             )
             .on('mouseout', (d) ->
               d3.select(d3.event.target).attr('r', 2)
-              that.onMouseOut(svg)
+              handlers.onMouseOut?(svg)
             )
 
         colGroup.selectAll("rect")
@@ -226,69 +245,45 @@ mod.factory('n3utils', ['$window', ($window) ->
 
         return this
 
-      updateColumns: (svg, scales, columnWidth) ->
-        svg.select('.content').selectAll('.columnGroup').selectAll('rect')
-          .attr(
-            width: columnWidth
-            x: (d) -> scales.xScale(d.x)
-            y: (d) -> scales[d.axis + 'Scale'](Math.max(0, d.value))
-            height: (d) ->
-              Math.abs(
-                scales[d.axis + 'Scale'](d.value) - scales[d.axis + 'Scale'](0)
-              )
-          )
-
-        return this
-
 # ----
 
 
 # lib/utils/dots.coffee
-      drawDots: (svg, axes, data) ->
-        that = this
-
-        svg.select('.content').selectAll('.dotGroup')
+      drawDots: (svg, axes, data, options, handlers) ->
+        dotGroup = svg.select('.content').selectAll('.dotGroup')
           .data data.filter (s) -> s.type in ['line', 'area']
           .enter().append('g')
+        dotGroup.attr(
+            class: (s) -> "dotGroup series_#{s.index}"
+            fill: (s) -> s.color
+          )
+          .selectAll('.dot').data (d) -> d.values
+            .enter().append('circle')
             .attr(
-              class: (s) -> "dotGroup series_#{s.index}"
-              fill: (s) -> s.color
+              'class': 'dot'
+              'r': 2
+              'cx': (d) -> axes.xScale(d.x)
+              'cy': (d) -> axes[d.axis + 'Scale'](d.value)
             )
-            .on('mouseover', (series) ->
-              target = d3.select(d3.event.target)
-              target.attr('r', 4)
-
-              that.onMouseOver(svg, {
-                series: series
-                x: target.attr('cx')
-                y: target.attr('cy')
-                datum: target.datum()
-              })
+            .style(
+              'stroke': 'white'
+              'stroke-width': '2px'
             )
-            .on('mouseout', (d) ->
-              d3.select(d3.event.target).attr('r', 2)
-              that.onMouseOut(svg)
-            )
-            .selectAll('.dot').data (d) -> d.values
-              .enter().append('circle')
-              .attr(
-                'class': 'dot'
-                'r': 2
-                'cx': (d) -> axes.xScale(d.x)
-                'cy': (d) -> axes[d.axis + 'Scale'](d.value)
-              )
-              .style(
-                'stroke': 'white'
-                'stroke-width': '2px'
-              )
+        if options.tooltipMode in ['dots', 'both', 'scrubber']
+          dotGroup.on('mouseover', (series) ->
+            target = d3.select(d3.event.target)
+            target.attr('r', 4)
 
-        return this
-
-      updateDots: (svg, scales) ->
-        svg.select('.content').selectAll('.dotGroup').selectAll('.dot')
-          .attr(
-            'cx': (d) -> scales.xScale(d.x)
-            'cy': (d) -> scales[d.axis + 'Scale'](d.value)
+            handlers.onMouseOver?(svg, {
+              series: series
+              x: target.attr('cx')
+              y: target.attr('cy')
+              datum: target.datum()
+            })
+          )
+          .on('mouseout', (d) ->
+            d3.select(d3.event.target).attr('r', 2)
+            handlers.onMouseOut?(svg)
           )
 
         return this
@@ -297,15 +292,36 @@ mod.factory('n3utils', ['$window', ($window) ->
 
 
 # lib/utils/legend.coffee
-      drawLegend: (svg, series, dimensions) ->
-        layout = [0]
+      computeLegendLayout: (series, dimensions) ->
+        fn = (s) -> s.label || s.y
 
+        layout = [0]
+        leftSeries = series.filter (s) -> s.axis is 'y'
         i = 1
-        while i < series.length
-          l = series[i - 1].label or series[i - 1].y
-          layout.push @getTextWidth(l) + layout[i - 1] + 40
+        while i < leftSeries.length
+          layout.push @getTextWidth(fn(leftSeries[i - 1])) + layout[i - 1] + 40
           i++
 
+
+        rightSeries = series.filter (s) -> s.axis is 'y2'
+        return layout if rightSeries.length is 0
+
+        w = dimensions.width - dimensions.right - dimensions.left
+
+        rightLayout = [w - @getTextWidth(fn(rightSeries[rightSeries.length - 1]))]
+
+        j = rightSeries.length - 2
+        while j >= 0
+          label = fn(rightSeries[j])
+          rightLayout.push w - @getTextWidth(label) - (w - rightLayout[rightLayout.length - 1]) - 40
+          j--
+
+        rightLayout.reverse()
+
+        return layout.concat(rightLayout)
+
+      drawLegend: (svg, series, dimensions, handlers) ->
+        layout = this.computeLegendLayout(series, dimensions)
 
         that = this
         legend = svg.append('g').attr('class', 'legend')
@@ -317,14 +333,24 @@ mod.factory('n3utils', ['$window', ($window) ->
 
         item = legend.selectAll('.legendItem')
           .data(series)
-          .enter().append('g')
+
+        item.enter().append('g')
             .attr(
-              'class': 'legendItem'
+              'class': (s, i) -> "legendItem series_#{i}"
               'transform': (s, i) -> "translate(#{layout[i]},#{dimensions.height-40})"
+              'opacity': (s, i) ->
+                if s.visible is false
+                  that.toggleSeries(svg, i)
+                  return '0.2'
+
+                return '1'
             )
 
         item.on('click', (s, i) ->
-          d3.select(this).attr('opacity', if that.toggleSeries(svg, i) then '1' else '0.2')
+          isNowVisible = that.toggleSeries(svg, i)
+
+          d3.select(this).attr('opacity', if isNowVisible then '1' else '0.2')
+          handlers.onSeriesVisibilityChange?({series: s, index: i, newVisibility: isNowVisible})
         )
 
         item.append('circle')
@@ -356,7 +382,8 @@ mod.factory('n3utils', ['$window', ($window) ->
 
         item.append('text')
           .attr(
-            'font-family': 'monospace'
+            'class': (d, i) -> "legendItem series_#{i}"
+            'font-family': 'Courier'
             'font-size': 10
             'transform': 'translate(13, 4)'
             'text-rendering': 'geometric-precision'
@@ -383,13 +410,13 @@ mod.factory('n3utils', ['$window', ($window) ->
         isVisible = false
 
         svg.select('.content').selectAll('.series_' + index)
-          .attr('opacity', (s) ->
-            if d3.select(this).attr('opacity') is '0'
+          .style('display', (s) ->
+            if d3.select(this).style('display') is 'none'
               isVisible = true
-              return '1'
-
-            isVisible = false
-            return '0'
+              return 'initial'
+            else
+              isVisible = false
+              return 'none'
           )
 
         return isVisible
@@ -398,25 +425,70 @@ mod.factory('n3utils', ['$window', ($window) ->
 
 
 # lib/utils/lines.coffee
-      drawLines: (svg, scales, data, options) ->
+      drawLines: (svg, scales, data, options, handlers) ->
         drawers =
           y: this.createLeftLineDrawer(scales, options.lineMode, options.tension)
           y2: this.createRightLineDrawer(scales, options.lineMode, options.tension)
 
-        svg.select('.content').selectAll('.lineGroup')
+        lineGroup = svg.select('.content').selectAll('.lineGroup')
           .data data.filter (s) -> s.type in ['line', 'area']
           .enter().append('g')
-            .style('stroke', (s) -> s.color)
-            .attr('class', (s) -> "lineGroup series_#{s.index}")
-            .append('path')
-              .attr(
-                class: 'line'
-                d: (d) -> drawers[d.axis](d.values)
-              )
-              .style(
-                'fill': 'none'
-                'stroke-width': (s) -> s.thickness
-              )
+        lineGroup.style('stroke', (s) -> s.color)
+        .attr('class', (s) -> "lineGroup series_#{s.index}")
+        .append('path')
+          .attr(
+            class: 'line'
+            d: (d) -> drawers[d.axis](d.values)
+          )
+          .style(
+            'fill': 'none'
+            'stroke-width': (s) -> s.thickness
+          )
+        if options.tooltipMode in ['both', 'lines']
+          interpolateData = (series) ->
+            target = d3.select(d3.event.target)
+            try
+              mousePos = d3.mouse(this)
+            catch error
+              mousePos = [0, 0]
+            # interpolate between min/max based on mouse coords
+            valuesData = target.datum().values
+            # find min/max coords and values
+            for datum, i in valuesData
+              x = scales.xScale(datum.x)
+              y = scales.yScale(datum.value)
+              if !minXPos? or x < minXPos
+                minXPos = x
+                minXValue = datum.x
+              if !maxXPos? or x > maxXPos
+                maxXPos = x
+                maxXValue = datum.x
+              if !minYPos? or y < minYPos
+                minYPos = y
+              if !maxYPos? or y > maxYPos
+                maxYPos = y
+              if !minYValue? or datum.value < minYValue
+                minYValue = datum.value
+              if !maxYValue? or datum.value > maxYValue
+                maxYValue = datum.value
+
+            xPercentage = (mousePos[0] - minXPos) / (maxXPos - minXPos)
+            yPercentage = (mousePos[1] - minYPos) / (maxYPos - minYPos)
+            xVal = Math.round(xPercentage * (maxXValue - minXValue) + minXValue)
+            yVal = Math.round((1 - yPercentage) * (maxYValue - minYValue) + minYValue)
+
+            interpDatum = x: xVal, value: yVal
+
+            handlers.onMouseOver?(svg, {
+              series: series
+              x: mousePos[0]
+              y: mousePos[1]
+              datum: interpDatum
+            })
+
+          lineGroup
+            .on 'mousemove', interpolateData
+            .on 'mouseout', (d) -> handlers.onMouseOut?(svg)
 
         return this
 
@@ -474,6 +546,63 @@ mod.factory('n3utils', ['$window', ($window) ->
 
       createContent: (svg) ->
         svg.append('g').attr('class', 'content')
+
+      createGlass: (svg, dimensions, handlers, axes, data) ->
+        glass = svg.append('g')
+          .attr(
+            'class': 'glass-container'
+            'opacity': 0
+          )
+
+        items = glass.selectAll('.scrubberItem')
+          .data(data)
+          .enter()
+            .append('g')
+              .attr(
+                'class', (s, i) -> "scrubberItem series_#{i}"
+              )
+
+        items.append('circle')
+          .attr(
+            'class': (s, i) -> "scrubberDot series_#{i}"
+            'fill': 'white'
+            'stroke': (s) -> s.color
+            'stroke-width': '2px'
+            'r': 4
+          )
+
+        items.append('path')
+          .attr(
+            'class': (s, i) -> "scrubberPath series_#{i}"
+            'y': '-7px'
+            'fill': (s) -> s.color
+          )
+
+        items.append('text')
+          .style('text-anchor', (s) -> return if s.axis is 'y' then 'end' else 'start')
+          .attr(
+            'class': (d, i) -> "scrubberText series_#{i}"
+            'height': '14px'
+            'font-family': 'Courier'
+            'font-size': 10
+            'fill': 'white'
+            'transform': (s) ->
+              return if s.axis is 'y' then 'translate(-7, 3)' else 'translate(7, 3)'
+            'text-rendering': 'geometric-precision'
+          )
+          .text (s) -> s.label || s.y
+
+        glass.append('rect')
+          .attr(
+            class: 'glass'
+            width: dimensions.width - dimensions.left - dimensions.right
+            height: dimensions.height - dimensions.top - dimensions.bottom
+          )
+          .style('fill', 'white')
+          .style('fill-opacity', 0.000001)
+          .on('mouseover', ->
+            handlers.onChartHover(svg, d3.select(d3.event.target), axes, data)
+          )
 
       getDataPerSeries: (data, options) ->
         series = options.series
@@ -559,7 +688,7 @@ mod.factory('n3utils', ['$window', ($window) ->
 # lib/utils/options.coffee
       getDefaultOptions: ->
         return {
-          tooltipMode: 'default'
+          tooltipMode: 'dots'
           lineMode: 'linear'
           tension: 0.7
           axes: {
@@ -567,10 +696,17 @@ mod.factory('n3utils', ['$window', ($window) ->
             y: {type: 'linear'}
           }
           series: []
+          drawLegend: true
+          drawDots: true
         }
 
-      sanitizeOptions: (options) ->
+      sanitizeOptions: (options, mode) ->
         return this.getDefaultOptions() unless options?
+
+        if mode is 'thumbnail'
+          options.drawLegend = false
+          options.drawDots = false
+          options.tooltipMode = 'none'
 
         options.series = this.sanitizeSeriesOptions(options.series)
 
@@ -579,7 +715,14 @@ mod.factory('n3utils', ['$window', ($window) ->
         options.lineMode or= 'linear'
         options.tension = if /^\d+(\.\d+)?$/.test(options.tension) then options.tension else 0.7
 
-        options.tooltipMode or= 'default'
+        if options.tooltipMode not in ['none', 'dots', 'lines', 'both', 'scrubber']
+          options.tooltipMode = 'dots'
+
+        if options.tooltipMode is 'scrubber'
+          options.drawLegend = true
+
+        options.drawLegend = true unless options.drawLegend is false
+        options.drawDots = true unless options.drawDots is false
 
         return options
 
@@ -588,6 +731,7 @@ mod.factory('n3utils', ['$window', ($window) ->
 
         colors = d3.scale.category10()
         options.forEach (s, i) ->
+          s.axis = if s.axis?.toLowerCase() isnt 'y2' then 'y' else 'y2'
           s.color or= colors(i)
           s.type = if s.type in ['line', 'area', 'column'] then s.type else "line"
 
@@ -606,7 +750,37 @@ mod.factory('n3utils', ['$window', ($window) ->
         axesOptions.y = this.sanitizeAxisOptions(axesOptions.y)
         axesOptions.y2 = this.sanitizeAxisOptions(axesOptions.y2) if secondAxis
 
+        this.sanitizeExtrema(axesOptions.y)
+        this.sanitizeExtrema(axesOptions.y2) if secondAxis
+
         return axesOptions
+
+      sanitizeExtrema: (options) ->
+        min = this.getSanitizedExtremum(options.min)
+        if min?
+          options.min = min
+        else
+          delete options.min
+
+        max = this.getSanitizedExtremum(options.max)
+        if max?
+          options.max = max
+        else
+          delete options.max
+
+
+
+      getSanitizedExtremum: (value) ->
+        return undefined unless value?
+
+        number = parseInt(value, 10)
+
+        if isNaN(number)
+          $log.warn("Invalid extremum value : #{value}, deleting it.")
+          return undefined
+
+        return number
+
 
       sanitizeAxisOptions: (options) ->
         return {type: 'linear'} unless options?
@@ -647,13 +821,16 @@ mod.factory('n3utils', ['$window', ($window) ->
         else
           y2 = d3.scale.linear().rangeRound([height, 0])
 
+        y.clamp(true)
+        y2.clamp(true)
+
         xAxis = d3.svg.axis().scale(x).orient('bottom').tickFormat(axesOptions.x.labelFunction)
         yAxis = d3.svg.axis().scale(y).orient('left').tickFormat(axesOptions.y.labelFunction)
         y2Axis = d3.svg.axis().scale(y2).orient('right').tickFormat(axesOptions.y2?.labelFunction)
 
         style = (group) ->
           group.style(
-            'font': '10px monospace'
+            'font': '10px Courier'
             'shape-rendering': 'crispEdges'
           )
 
@@ -708,16 +885,8 @@ mod.factory('n3utils', ['$window', ($window) ->
       setScalesDomain: (scales, data, series, svg, axesOptions) ->
         this.setXScale(scales.xScale, data, series, axesOptions)
 
-        ySeries = series.filter (s) -> s.axis isnt 'y2'
-        y2Series = series.filter (s) -> s.axis is 'y2'
-
-        yDomain = this.yExtent(ySeries, data)
-        if axesOptions.y.type is 'log'
-          yDomain[0] = if yDomain[0] is 0 then 0.001 else yDomain[0]
-
-        y2Domain = this.yExtent(y2Series, data)
-        if axesOptions.y2?.type is 'log'
-          y2Domain[0] = if y2Domain[0] is 0 then 0.001 else y2Domain[0]
+        yDomain = this.getVerticalDomain(axesOptions, data, series, 'y')
+        y2Domain = this.getVerticalDomain(axesOptions, data, series, 'y2')
 
         scales.yScale.domain(yDomain).nice()
         scales.y2Scale.domain(y2Domain).nice()
@@ -725,6 +894,18 @@ mod.factory('n3utils', ['$window', ($window) ->
         svg.selectAll('.x.axis').call(scales.xAxis)
         svg.selectAll('.y.axis').call(scales.yAxis)
         svg.selectAll('.y2.axis').call(scales.y2Axis)
+
+      getVerticalDomain: (axesOptions, data, series, key) ->
+        return [] unless o = axesOptions[key]
+
+        domain = this.yExtent((series.filter (s) -> s.axis is key), data)
+        if o.type is 'log'
+          domain[0] = if domain[0] is 0 then 0.001 else domain[0]
+
+        domain[0] = o.min if o.min?
+        domain[1] = o.max if o.max?
+
+        return domain
 
       yExtent: (series, data) ->
         minY = Number.POSITIVE_INFINITY
@@ -734,24 +915,41 @@ mod.factory('n3utils', ['$window', ($window) ->
           minY = Math.min(minY, d3.min(data, (d) -> d[s.y]))
           maxY = Math.max(maxY, d3.max(data, (d) -> d[s.y]))
 
+        if minY is maxY
+          if minY > 0
+            return [0, minY*2]
+          else
+            return [minY*2, 0]
+
         return [minY, maxY]
 
       setXScale: (xScale, data, series, axesOptions) ->
-        xScale.domain(d3.extent(data, (d) -> d[axesOptions.x.key]))
+        xScale.domain(this.xExtent(data, axesOptions.x.key))
 
         if series.filter((s) -> s.type is 'column').length
           this.adjustXScaleForColumns(xScale, data, axesOptions.x.key)
 
+      xExtent: (data, key) ->
+        [from, to] = d3.extent(data, (d) -> d[key])
+
+        if from is to
+          if from > 0
+            return [0, from*2]
+          else
+            return [from*2, 0]
+
+        return [from, to]
+
       adjustXScaleForColumns: (xScale, data, field) ->
         step = this.getAverageStep(data, field)
         d = xScale.domain()
-
         if angular.isDate(d[0])
           xScale.domain([new Date(d[0].getTime() - step), new Date(d[1].getTime() + step)])
         else
           xScale.domain([d[0] - step, d[1] + step])
 
       getAverageStep: (data, field) ->
+        return 0 unless data.length > 1
         sum = 0
         n = data.length - 1
         i = 0
@@ -768,6 +966,72 @@ mod.factory('n3utils', ['$window', ($window) ->
 
 
 # lib/utils/tooltips.coffee
+      getTooltipHandlers: (options) ->
+        if options.tooltipMode is 'scrubber'
+          return {
+            onChartHover: angular.bind(this, this.showScrubber)
+          }
+        else
+          return {
+            onMouseOver: angular.bind(this, this.onMouseOver)
+            onMouseOut: angular.bind(this, this.onMouseOut)
+          }
+
+      showScrubber: (svg, glass, axes, data) ->
+        that = this
+        glass.on('mousemove', ->
+          svg.selectAll('.glass-container').attr('opacity', 1)
+          that.updateScrubber(svg, d3.mouse(this), axes, data)
+        )
+        glass.on('mouseout', ->
+          glass.on('mousemove', null)
+          svg.selectAll('.glass-container').attr('opacity', 0)
+        )
+
+      updateScrubber: (svg, [x, y], axes, data) ->
+        # Dichotomy FTW
+        getClosest = (values, value) ->
+          left = 0
+          right = values.length - 1
+
+          i = Math.round((right - left)/2)
+          while true
+            if value < values[i].x
+              right = i
+              i = i - Math.ceil((right-left)/2)
+            else
+              left = i
+              i = i + Math.floor((right-left)/2)
+
+
+            if i in [left, right]
+              if Math.abs(value - values[left].x) < Math.abs(value - values[right].x)
+                i = left
+              else
+                i = right
+              break
+
+          return values[i]
+
+        that = this
+        data.forEach (series, index) ->
+          v = getClosest(series.values, axes.xScale.invert(x))
+
+          item = svg.select(".scrubberItem.series_#{index}")
+          item.transition().duration(50)
+            .attr('transform': "translate(#{axes.xScale(v.x)}, #{axes[v.axis + 'Scale'](v.value)})")
+
+          item.select('text').text(v.value)
+
+          item.select('path')
+            .attr('d', (s) ->
+              if s.axis is 'y2'
+                return that.getY2TooltipPath(that.getTextWidth('' + v.value))
+              else
+                return that.getYTooltipPath(that.getTextWidth('' + v.value))
+            )
+
+
       addTooltips: (svg, dimensions, axesOptions) ->
         width = dimensions.width
         height = dimensions.height
@@ -840,34 +1104,34 @@ mod.factory('n3utils', ['$window', ($window) ->
               'text-rendering': 'geometric-precision'
             )
 
-      onMouseOver: (svg, target) ->
-        this.updateXTooltip(svg, target)
+      onMouseOver: (svg, event) ->
+        this.updateXTooltip(svg, event)
 
-        if target.series.axis is 'y2'
-          this.updateY2Tooltip(svg, target)
+        if event.series.axis is 'y2'
+          this.updateY2Tooltip(svg, event)
         else
-          this.updateYTooltip(svg, target)
+          this.updateYTooltip(svg, event)
 
       onMouseOut: (svg) ->
         this.hideTooltips(svg)
 
-      updateXTooltip: (svg, target) ->
+      updateXTooltip: (svg, event) ->
         xTooltip = svg.select("#xTooltip")
           .transition()
           .attr(
             'opacity': 1.0
-            'transform': 'translate(' + target.x + ',0)'
+            'transform': 'translate(' + event.x + ',0)'
           )
 
         textX = undefined
-        if target.series.xFormatter?
-          textX = '' + target.series.xFormatter(target.datum.x)
+        if event.series.xFormatter?
+          textX = '' + event.series.xFormatter(event.datum.x)
         else
-          textX = '' + target.datum.x
+          textX = '' + event.datum.x
 
         xTooltip.select('text').text(textX)
         xTooltip.select('path')
-          .attr('fill', target.series.color)
+          .attr('fill', event.series.color)
           .attr('d', this.getXTooltipPath(textX))
 
       getXTooltipPath: (text) ->
@@ -884,15 +1148,15 @@ mod.factory('n3utils', ['$window', ($window) ->
           'l-' + p + ' ' + h/4 + ' ' +
           'l-' + (w/2 - p) + ' 0z'
 
-      updateYTooltip: (svg, target) ->
+      updateYTooltip: (svg, event) ->
         yTooltip = svg.select("#yTooltip")
           .transition()
           .attr(
             'opacity': 1.0
-            'transform': 'translate(0, ' + target.y + ')'
+            'transform': 'translate(0, ' + event.y + ')'
           )
 
-        textY = '' + target.datum.value
+        textY = '' + event.datum.value
         w = this.getTextWidth(textY)
         yTooltipText = yTooltip.select('text').text(textY)
 
@@ -902,7 +1166,7 @@ mod.factory('n3utils', ['$window', ($window) ->
         )
 
         yTooltip.select('path')
-          .attr('fill', target.series.color)
+          .attr('fill', event.series.color)
           .attr('d', this.getYTooltipPath(w))
 
       getYTooltipPath: (w) ->
@@ -918,24 +1182,24 @@ mod.factory('n3utils', ['$window', ($window) ->
           'l0 -' + (h/2 - p) +
           'l-' + p + ' ' + p + 'z'
 
-      updateY2Tooltip: (svg, target) ->
+      updateY2Tooltip: (svg, event) ->
         y2Tooltip = svg.select("#y2Tooltip")
           .transition()
           .attr('opacity', 1.0)
 
-        textY = '' + target.datum.value
+        textY = '' + event.datum.value
         w = this.getTextWidth(textY)
         y2TooltipText = y2Tooltip.select('text').text(textY)
         y2TooltipText.attr(
-          'transform': 'translate(7, ' + (parseFloat(target.y) + 3) + ')'
+          'transform': 'translate(7, ' + (parseFloat(event.y) + 3) + ')'
           'w': w
         )
 
         y2Tooltip.select('path')
           .attr(
-            'fill': target.series.color
+            'fill': event.series.color
             'd': this.getY2TooltipPath(w)
-            'transform': 'translate(0, ' + target.y + ')'
+            'transform': 'translate(0, ' + event.y + ')'
           )
 
       getY2TooltipPath: (w) ->
