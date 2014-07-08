@@ -27,8 +27,6 @@ A patient goes to the clinic to get tested. They are handed a card at the end of
 
 ## Acceptance Criteria
 
-Give me a short name here plz.
-
 ### Scenario 1: All test results are in and are negative
 
 + **Given** all the patient's test results are in
