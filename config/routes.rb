@@ -12,7 +12,10 @@ Rails.application.routes.draw do
     resources :infection_trends
   end
 
-  resources :dashboards
+  namespace :providers do
+    resources :dashboards
+  end
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
