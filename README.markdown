@@ -49,6 +49,7 @@ according to YARD conventions.
    it in.
 1. Also, it'd be awfully boss of you if you could try not to lower our
    Code Climate score by too much.
+1. Pat yourself on the back for being a rockstar.
 
 ### Documentation
 
