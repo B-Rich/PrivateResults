@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140512163537) do
+ActiveRecord::Schema.define(version: 20140709144131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,15 +66,6 @@ ActiveRecord::Schema.define(version: 20140512163537) do
   add_index "results", ["uuid"], name: "index_results_on_uuid", using: :btree
   add_index "results", ["visit_id"], name: "index_results_on_visit_id", using: :btree
 
-  create_table "tests", force: true do |t|
-    t.string   "name"
-    t.integer  "infection_id"
-    t.integer  "visit_id"
-    t.uuid     "uuid"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "versions", force: true do |t|
     t.string   "item_type",  null: false
     t.integer  "item_id",    null: false
@@ -100,10 +91,14 @@ ActiveRecord::Schema.define(version: 20140512163537) do
     t.integer  "partners_last_6_months_5_or_more"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "phone_user_number"
+    t.string   "phone_password_number"
   end
 
   add_index "visits", ["cosite"], name: "index_visits_on_cosite", using: :btree
   add_index "visits", ["patient_id"], name: "index_visits_on_patient_id", using: :btree
+  add_index "visits", ["phone_password_number"], name: "index_visits_on_phone_password_number", using: :btree
+  add_index "visits", ["phone_user_number"], name: "index_visits_on_phone_user_number", using: :btree
   add_index "visits", ["uuid"], name: "index_visits_on_uuid", using: :btree
   add_index "visits", ["visited_on"], name: "index_visits_on_visited_on", using: :btree
 

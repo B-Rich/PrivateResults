@@ -32,6 +32,8 @@ FactoryGirl.define do
     sexual_identity "Straight"
     sexual_preference "Opposite sex"
     uuid { UUID.generate }
+    sequence(:phone_user_number) {|n| "#{n * 100}#{n}" }
+    sequence(:phone_password_number) {|n| "#{n * 100}#{n}" }
 
     patient
   end

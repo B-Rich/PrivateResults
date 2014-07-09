@@ -63,5 +63,9 @@ class Visit < ActiveRecord::Base
   validates :race, inclusion: { in: RACE_VALUES }, allow_blank: true
   validates :sexual_preference, inclusion: { in: SEXUAL_PREFERENCE_VALUES }, allow_blank: true
   validates :sexual_identity, inclusion: { in: SEXUAL_IDENTITY_VALUES }, allow_blank: true
+
+  validates :phone_user_number, presence: true, numericality: true
+  validates :phone_password_number, presence: true, numericality: true
+
   has_paper_trail
 end
