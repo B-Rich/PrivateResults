@@ -13,10 +13,12 @@ class InfectionTestFactory
   #  infection_test_factory.make!
   # @return [InfectionTest] the created visit
   def make!
-    InfectionTest
-      .where(:name => name,
-             :visit_id => visit_id,
-             :infection_id => infection_id)
-      .first_or_create!
+    Rails.logger.tagged("InfectionTestFactory") do
+      InfectionTest
+        .where(:name => name,
+               :visit_id => visit_id,
+               :infection_id => infection_id)
+        .first_or_create!
+    end
   end
 end

@@ -13,12 +13,14 @@ class ResultFactory
   #  result_factory.make!
   # @return [Result] the created result
   def make!
-    Result
-      .where(:name => name,
-             :infection_test_id => infection_test_id,
-             :positive => positive,
-             :visit_id => visit_id,
-             :infection_id => infection_id)
-      .first_or_create!
+    Rails.logger.tagged("ResultFactory") do
+      Result
+        .where(:name => name,
+               :infection_test_id => infection_test_id,
+               :positive => positive,
+               :visit_id => visit_id,
+               :infection_id => infection_id)
+        .first_or_create!
+    end
   end
 end

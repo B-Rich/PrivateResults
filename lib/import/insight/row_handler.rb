@@ -56,6 +56,8 @@ module Insight
                        :zip_code,
                        :sexualpref,
                        :sexualidentity,
+                       :username,
+                       :password,
                        :age,
                        :partners_last_6_months_5_or_more].map {|e| {e => e} }.reduce(&:merge)
 

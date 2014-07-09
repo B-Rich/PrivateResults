@@ -10,7 +10,7 @@ describe DataStreamImporter do
   describe '#header' do
     context 'length' do
       it do
-        data_stream_importer.rows; expect(data_stream_importer.header.length).to eq(117)
+        data_stream_importer.rows; expect(data_stream_importer.header.length).to eq(119)
       end
     end
   end

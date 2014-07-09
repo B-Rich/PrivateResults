@@ -8,10 +8,12 @@ describe VisitFactory do
       :age                              => '42',
       :cosite                           => "D",
       :partners_last_6_months_5_or_more => "0",
+      :password                         => "9129369670000",
       :race                             => "White",
       :sex                              => "M",
       :sexualidentity                   => "Straight",
       :sexualpref                       => "Opposite sex",
+      :username                         => "8949765110000",
       :visit_date                       => "17 Nov 11",
       :zip_code                         => "21206"
     }
