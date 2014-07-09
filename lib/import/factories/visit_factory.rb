@@ -41,7 +41,6 @@ class VisitFactory
   # @param date_string [String] raw date string in DD-Mon-YY format
   # @return [Date] the converted Ruby Date object
   def parsed_visit_date(date_string)
-    Rails.logger.info("Attempting to parse #{date_string}")
     Date.strptime(date_string, DATE_FORMAT_STRING)
   end
 
