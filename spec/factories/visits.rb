@@ -16,6 +16,8 @@
 #  partners_last_6_months_5_or_more :integer
 #  created_at                       :datetime
 #  updated_at                       :datetime
+#  phone_user_number                :string(255)
+#  phone_password_number            :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
