@@ -40,6 +40,7 @@ As a general rule, we require test coverage for all new features. We
 use RSpec for tests and also encourage you to document your code
 according to YARD conventions.
 
+1. Fork this repo on GitHub.
 1. Add your feature with tests.
 1. Add yourself to the CONTRIBUTORS file since you deserve credit and
    recognition for your contributions.
