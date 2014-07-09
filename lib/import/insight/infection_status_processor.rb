@@ -31,7 +31,9 @@ module Insight
     #  infection_status_processor.process!
     # @return [NotSure] Not Sure
     def process!
-      generate_infection_test_results(generate_infection_tests)
+      Rails.logger.tagged("InfectionStatusProcessor") do
+        generate_infection_test_results(generate_infection_tests)
+      end
     end
 
     Contract nil => ArrayOf[InfectionTest]
