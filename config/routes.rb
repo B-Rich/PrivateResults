@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   namespace :providers do
     resources :dashboards
+    resources :patients
   end
 
   # Example of regular route:
