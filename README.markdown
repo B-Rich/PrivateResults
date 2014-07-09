@@ -29,6 +29,9 @@ Please contact us if you, your company or your organization have a
 desire to sponsor development of this project. Sponsors recieve a
 variety of benefits which our team can discuss with you. Get in touch!
 
+You can also donate at
+[http://www.sexualhealthinnovations.org/donate/](http://www.sexualhealthinnovations.org/donate/)
+
 ### Code contributions
 
 *In the future, we plan to support git-flow*
