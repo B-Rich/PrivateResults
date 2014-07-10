@@ -38,6 +38,7 @@ group :development, :test do
   gem 'guard-yard'
   gem 'json-schema'
   gem 'oink'
+  gem 'poltergeist'
   gem 'pry-nav'
   gem 'quiet_assets'
   gem 'rails-erd'

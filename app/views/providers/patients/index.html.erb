@@ -9,7 +9,9 @@
         <div class="input-group">
           <%= search_field(:patient_number, :patient_number,
                            class: 'form-control input-lg',
-                           placeholder: "#{Patient.model_name.human} ID")%>
+                           placeholder: "#{Patient.model_name.human} ID",
+                           required: true,
+                           'aria-required' => true)%>
           <span class="input-group-btn">
             <button class="btn btn-lg" type="submit">
               <span class="glyphicon glyphicon-search"></span> <%= t(:search) %>
@@ -19,6 +21,21 @@
             </button>
           </span>
         </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-8 col-md-8">
+
+      <% if @patients.nil? %>
+        <!-- Nothing to see here, folks -->
+      <% elsif [] == @patients %>
+        <div class="alert alert-danger" role="alert">
+          <%= Patient.model_name.human %> <%= t(:not_found) %>
+        </div>
+      <% else %>
+        <%= @patients.first.patient_number %>
       <% end %>
     </div>
   </div>
