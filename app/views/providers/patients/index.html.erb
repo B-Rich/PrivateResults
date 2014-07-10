@@ -33,10 +33,11 @@
         <!-- Nothing to see here, folks -->
       <% elsif [] == @patients %>
         <div class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
           <%= Patient.model_name.human %> <%= t(:not_found) %>
         </div>
       <% else %>
-        <%= @patients.first.patient_number %>
+        <%= render partial: 'patient', locals: { patient: @patients.first } %>
       <% end %>
     </div>
   </div>

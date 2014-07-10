@@ -1,0 +1,14 @@
+<div class="patient_search_result">
+  <h3 data-patient-id="<%= patient.id %>"
+      data-patient-uuid="<%= patient.uuid %>">
+    <%= Patient.model_name.human %>: <%= patient.patient_number%>
+    <small>
+      <%= Patient.human_attribute_name(:created) %>
+      <%= time_ago_in_words(patient.created_at) %>
+      ago has had
+      <%= patient.visits.count %>
+      <%= Visit.model_name.human.pluralize %>
+    </small>
+  </h3>
+
+</div>

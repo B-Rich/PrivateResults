@@ -31,22 +31,34 @@ feature "#{Patient.model_name.human} search" do
   end
 
   context 'given an existing patient' do
-    scenario 'searching for a patient' do
+    before(:each) do
       fill_in(search_input_name, with: patient.patient_number)
       click_on("Search")
+    end
 
-      within('.main') do
+    scenario 'searching for a patient' do
+      within('.patient_search_result') do
         expect(page).to have_content(patient.patient_number)
+      end
+    end
+
+    scenario 'displaying basic patient info' do
+      within('.patient_search_result') do
+        expect(page).to have_content("#{patient.visits.count} #{Visit.model_name.human.pluralize}")
+        expect(page).to have_content(Patient.human_attribute_name(:created))
       end
     end
   end
 
   context 'given a non-existant patient' do
-    scenario 'searching for a patient' do
+    before(:each) do
       fill_in(search_input_name, with: patient.patient_number + '10')
       click_on("Search")
+    end
 
+    scenario 'searching for a patient' do
       within('.main') do
+        expect(page).not_to have_css('.patient_search_result')
         expect(page).not_to have_content(patient.patient_number)
         expect(page).to have_content(I18n.t(:not_found))
       end
