@@ -11,7 +11,8 @@
                            class: 'form-control input-lg',
                            placeholder: "#{Patient.model_name.human} ID",
                            required: true,
-                           'aria-required' => true)%>
+                           'aria-required' => true,
+                           autofocus: true)%>
           <span class="input-group-btn">
             <button class="btn btn-lg" type="submit">
               <span class="glyphicon glyphicon-search"></span> <%= t(:search) %>
