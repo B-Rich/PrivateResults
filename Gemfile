@@ -25,7 +25,7 @@ gem 'therubyracer', platforms: :ruby # See https://github.com/sstephenson/execjs
 gem 'turbolinks' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'uglifier', '>= 1.3.0' # Use Uglifier as compressor for JavaScript assets
 gem 'uuid'
-
+gem 'twilio-ruby', '~> 3.11.0' # Twilio phone/sms integration
 
 group :development, :test do
   gem 'annotate'
