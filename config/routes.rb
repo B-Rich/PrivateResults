@@ -10,6 +10,10 @@ Rails.application.routes.draw do
     resources :coinfection_tables
     resources :infection_activity_timelines
     resources :infection_trends
+
+    get  'call_ins/username.:format' => 'call_ins#username'
+    post 'call_ins/password.:foramt' => 'call_ins#password'
+    post 'call_ins/:user_number/results.:format'  => 'call_ins#results'
   end
 
   resources :dashboards
