@@ -6,9 +6,60 @@
       <%= Patient.human_attribute_name(:created) %>
       <%= time_ago_in_words(patient.created_at) %>
       ago has had
-      <%= patient.visits.count %>
+      <span class="badge"><%= patient.visits.count %></span>
       <%= Visit.model_name.human.pluralize %>
     </small>
   </h3>
 
+  <% patient.visits.each do |visit| %>
+    <div class="row">
+      <div class="col-sm-12 col-md-12 visit"
+           data-visit-id="<%= visit.id %>"
+           data-visit-uuid="<%= visit.uuid %>">
+
+        <h4>
+          <%= Visit.model_name.human %> <%= visit.visited_on %>
+          <small>
+            <%= time_ago_in_words(visit.visited_on) %>
+            ago at <%= t(:clinic) %>
+            <%= visit.cosite %>
+          </small>
+        </h4>
+
+        <div class="pull-right">
+          <!-- FIXME: This is BS -->
+          <div class="btn-group">
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-ok"></span> Close</a>
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-comment"></span> Notes</a>
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-folder-open"></span> Details</a>
+          </div>
+        </div>
+
+        <ul class="list-unstyled">
+          <% [:age, :sex, :race, :sexual_preference, :sexual_identity].each do |attr|  %>
+            <li>
+              <strong><%= Visit.human_attribute_name(attr) %>:</strong> <%= visit.public_send(attr) %>
+            </li>
+          <% end %>
+        </ul>
+
+        <table class="table table-condensed">
+          <thead>
+            <th><%= InfectionTest.model_name.human %></th>
+            <th>Status</th>
+            <th>Last Activity</th>
+          </thead>
+          <tbody>
+            <% visit.infection_tests.each do |infection_test| %>
+              <tr>
+                <td><%= infection_test.name %></td>
+                <td><%= ["Pending", "Results In", "Delivered"].sample %></td>
+                <td><%= time_ago_in_words infection_test.created_at %> ago</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 </div>

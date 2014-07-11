@@ -13,6 +13,7 @@
                            required: true,
                            'aria-required' => true,
                            autofocus: true)%>
+
           <span class="input-group-btn">
             <button class="btn btn-lg" type="submit">
               <span class="glyphicon glyphicon-search"></span> <%= t(:search) %>
@@ -21,6 +22,7 @@
               <span class="glyphicon glyphicon-remove"></span> <%= t(:clear) %>
             </button>
           </span>
+
         </div>
       <% end %>
     </div>
@@ -34,7 +36,9 @@
       <% elsif [] == @patients %>
         <div class="alert alert-danger" role="alert">
           <span class="glyphicon glyphicon-exclamation-sign"></span>
-          <%= Patient.model_name.human %> <%= t(:not_found) %>
+          <%= Patient.model_name.human %>
+          <strong><%= @patient_search.patient_number %></strong>
+          <%= t(:not_found) %>
         </div>
       <% else %>
         <%= render partial: 'patient', locals: { patient: @patients.first } %>

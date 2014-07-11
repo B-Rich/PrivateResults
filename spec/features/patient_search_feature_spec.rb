@@ -7,6 +7,7 @@ feature "#{Patient.model_name.human} search" do
   let(:search_input_name) { "#{Patient.model_name.human} ID" }
 
   given(:patient) { FactoryGirl.create(:patient) }
+  given(:visits) { [FactoryGirl.create(:visit, patient: patient), FactoryGirl.create(:visit, patient: patient)] }
 
   scenario 'loads the search page' do
     within('.main') do
@@ -32,6 +33,7 @@ feature "#{Patient.model_name.human} search" do
 
   context 'given an existing patient' do
     before(:each) do
+      visits
       fill_in(search_input_name, with: patient.patient_number)
       click_on("Search")
     end
@@ -48,6 +50,15 @@ feature "#{Patient.model_name.human} search" do
         expect(page).to have_content(Patient.human_attribute_name(:created))
       end
     end
+
+    scenario 'display visits' do
+      within('.patient_search_result') do
+        visits.each do |visit|
+          expect(page).to have_css(".visit[data-visit-uuid='#{visit.uuid}']")
+          expect(page).to have_css(".visit[data-visit-id='#{visit.id}']")
+        end
+      end
+    end
   end
 
   context 'given a non-existant patient' do
@@ -59,7 +70,7 @@ feature "#{Patient.model_name.human} search" do
     scenario 'searching for a patient' do
       within('.main') do
         expect(page).not_to have_css('.patient_search_result')
-        expect(page).not_to have_content(patient.patient_number)
+        expect(page).to have_content(patient.patient_number)
         expect(page).to have_content(I18n.t(:not_found))
       end
     end
