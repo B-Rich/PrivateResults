@@ -54,7 +54,7 @@ describe Api::CallInsController, :type => :request do
       it { expect(response.status).to eql(200) }
       it { expect(response.body).not_to eq('') }
       it { expect(response.content_type).to eq(:xml) }
-      it { expect(response.body).to include?("not valid") }
+      it { expect(response.body).to include("not valid") }
     end
   end
 
